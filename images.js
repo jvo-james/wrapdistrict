@@ -13,14 +13,14 @@ window.WD_IMAGES = {
   homeHeroCommunity: 'images/hero4.jpg',      // Home hero slide: Feed the Street
 
   // PAGE HERO / LARGE SECTION BACKGROUNDS
-  aboutHero: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?auto=format&fit=crop&w=2000&q=90', // About page hero
-  aboutPhoto: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?auto=format&fit=crop&w=1500&q=90', // About page feature photo
-  contactPhoto: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=1200&q=88', // Contact page food photo
-  menuHero: 'https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=2200&q=90', // Menu page hero
-  teamHero: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=2000&q=90', // Team page hero
-  homeBuildSection: 'https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=1500&q=90', // Home “Make it dangerous” image
-  homeFeedStreet: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1600&q=90', // Home Feed the Street photo
-  promoFallback: 'https://images.unsplash.com/photo-1561651823-34feb02250e4?auto=format&fit=crop&w=1800&q=90', // Promo page fallback image
+  aboutHero: 'images/about.webp', // About page hero
+  aboutPhoto: 'images/teamhero.jpg', // About page feature photo
+  contactPhoto: 'images/contact.jpg', // Contact page food photo
+  menuHero: 'images/menuhero.jpg', // Menu page hero
+  teamHero: 'images/teamhero.jpg', // Team page hero
+  homeBuildSection: 'images/build.webp', // Home “Make it dangerous” image
+  homeFeedStreet: 'images/feed.jpeg', // Home Feed the Street photo
+  promoFallback: 'images/promo.jpg', // Promo page fallback image
   feedHero: 'images/hero4.jpg',               // Feed the Street hero background
   feedStory: 'images/hero4.jpg',              // Feed the Street “Where it started” image
   feedVisualBand: 'images/p1.jpeg',           // Feed the Street “Every plate…” visual band
@@ -35,9 +35,9 @@ window.WD_IMAGES = {
   productNoodles: 'images/a6.jpg',            // Noodles product card
   productSalad: 'images/salad.jpg', // District Salad
   productBurger: 'images/burger.jpg', // District Burger
-  sizeLite: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=86', // Small portion photo
-  sizeClassic: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=86', // Medium portion photo
-  sizeMax: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=86', // Large portion photo
+  sizeLite: 'images/salad.jpg', // Small portion photo
+  sizeClassic: 'images/salad2.jpg', // Medium portion photo
+  sizeMax: 'images/salad3.jpg', // Large portion photo
   promoFridayWrap: 'images/a7.jpg',           // Default Friday Wrap Run promo
 
   // PRODUCT EXTRAS / BUILDER THUMBNAILS
