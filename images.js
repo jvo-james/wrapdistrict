@@ -33,8 +33,8 @@ window.WD_IMAGES = {
   productLoadedJollof: 'images/a4.jpg',       // Loaded Jollof product card
   productLoadedAngwamo: 'images/a5.jpg',      // Loaded Angwamo product card
   productNoodles: 'images/a6.jpg',            // Noodles product card
-  productSalad: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=88', // District Salad
-  productBurger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=88', // District Burger
+  productSalad: 'images/salad.jpg', // District Salad
+  productBurger: 'images/burger.jpg', // District Burger
   sizeLite: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=86', // Small portion photo
   sizeClassic: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=86', // Medium portion photo
   sizeMax: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=86', // Large portion photo
