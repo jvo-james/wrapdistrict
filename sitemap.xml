@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://wrapdistrict.food/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://wrapdistrict.food/menu.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://wrapdistrict.food/deals.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wrapdistrict.food/about.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wrapdistrict.food/feed-the-street.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wrapdistrict.food/feed-gallery.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wrapdistrict.food/team.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://wrapdistrict.food/contact.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>

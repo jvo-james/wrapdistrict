@@ -1,0 +1,9 @@
+{
+  "name": "Wrap District",
+  "short_name": "Wrap District",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#100f0d",
+  "theme_color": "#100f0d",
+  "icons": [{"src":"/logo.jpeg","sizes":"any","type":"image/jpeg"}]
+}
