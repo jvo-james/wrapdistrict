@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>District Control | Wrap District</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpeg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-auth" id="adminAuth">
+  <form id="adminLogin" class="auth-card">
+    <div class="admin-brand"><b>WRAP DISTRICT</b><span>DISTRICT CONTROL</span></div>
+    <h1>Welcome back.</h1>
+    <p>Sign in to manage orders, menu items, customers, content and the rest of the website.</p>
+    <label>Email<input required type="email" name="email" autocomplete="username"></label>
+    <label>Password<input required type="password" name="password" autocomplete="current-password"></label>
+    <button class="primary">Sign in</button>
+    <p class="auth-note" id="authNote">Use an approved Wrap District admin account.</p>
+  </form>
+</div>
+
+<div class="admin-shell">
+  <aside class="admin-side" id="adminSidebar">
+    <div class="admin-side-head">
+      <div class="admin-logo-wrap"><img src="logo.jpeg" alt="Wrap District"><div class="admin-brand"><b>WRAP DISTRICT</b><span>DISTRICT CONTROL</span></div></div>
+      <button class="icon-square side-close" id="adminSideClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav class="admin-nav" id="adminNav">
+      <button class="active" data-view="overview"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></button>
+      <button data-view="orders"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span><b class="nav-count" id="ordersNavCount" hidden>0</b></button>
+      <button data-view="sales"><i class="fa-solid fa-chart-line"></i><span>Sales</span></button>
+      <button data-view="store"><i class="fa-solid fa-burger"></i><span>Store</span><b class="nav-count soft" id="productsNavCount" hidden>0</b></button>
+      <button data-view="content"><i class="fa-solid fa-images"></i><span>Content</span></button>
+      <button data-view="community"><i class="fa-solid fa-users"></i><span>Community</span><b class="nav-count" id="reviewsNavCount" hidden>0</b></button>
+      <button data-view="inbox"><i class="fa-solid fa-inbox"></i><span>Inbox</span><b class="nav-count" id="messagesNavCount" hidden>0</b></button>
+      <button data-view="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+    </nav>
+    <div class="side-bottom">
+      <strong id="adminName">Wrap District Admin</strong>
+      <a href="index.html" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open website</a>
+      <button id="adminLogout"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-top">
+      <div class="admin-top-title"><button class="icon-square" id="adminMenu" aria-label="Open menu"><i class="fa-solid fa-bars-staggered"></i></button><h1 id="viewTitle">Overview</h1></div>
+      <div class="admin-top-actions">
+        <span class="sync-pill" id="syncState"><i class="fa-solid fa-cloud"></i> Ready</span>
+        <div class="notification-menu" id="notificationMenu">
+          <button class="icon-square notification-button" id="notificationButton" aria-label="Notifications" aria-expanded="false"><i class="fa-regular fa-bell"></i><b id="notificationCount" hidden>0</b></button>
+          <div class="notification-popover" id="notificationPopover" aria-hidden="true">
+            <div class="notification-popover-arrow"></div>
+            <div class="notification-popover-head"><div><span>Updates</span><h3>Notifications</h3></div><span class="notification-popover-count" id="notificationPopoverCount">0</span></div>
+            <div class="notification-popover-list" id="notificationPopoverList"></div>
+            <button class="notification-popover-all" id="viewAllNotifications"><span>View all notifications</span><i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+        <a class="icon-square" href="index.html" target="_blank" aria-label="Open website"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <div class="admin-profile" id="profileEmail">Admin</div>
+        <button class="store-toggle" id="storeToggle"></button>
+      </div>
+    </header>
+
+    <section class="admin-content">
+      <div class="admin-view active" id="overview">
+        <div class="page-intro"><div><span>Today at a glance</span><h2>Store at a glance.</h2><p>See the orders, reviews, messages and stock items that need your attention right now.</p></div><span id="todayLabel" class="badge"></span></div>
+        <div class="metric-grid">
+          <button class="metric-card" data-jump="orders"><i class="fa-solid fa-bag-shopping"></i><span>Paid orders</span><b id="mOrders">0</b><small>Open order desk</small></button>
+          <button class="metric-card" data-jump="sales"><i class="fa-solid fa-cedi-sign"></i><span>Net sales</span><b id="mSales">GHS 0</b><small>Paid orders only</small></button>
+          <button class="metric-card" data-jump="orders"><i class="fa-solid fa-clock"></i><span>Pending payments</span><b id="mPending">0</b><small>Checkout records waiting</small></button>
+          <button class="metric-card" data-jump="community"><i class="fa-solid fa-star"></i><span>Reviews waiting</span><b id="mReviews">0</b><small>Needs a decision</small></button>
+        </div>
+        <div class="dashboard-grid"><div class="admin-panel"><div class="panel-head"><div><span>LATEST ACTIVITY</span><h3>Recent paid orders</h3></div><button class="text-btn" data-jump="orders">View all</button></div><div id="latestOrders"></div></div><div class="admin-panel"><div class="panel-head"><div><span>NEEDS ATTENTION</span><h3>What to check</h3></div></div><div id="attentionList"></div></div></div>
+      </div>
+
+      <div class="admin-view" id="orders">
+        <div class="page-intro"><div><span>Order desk</span><h2>Orders & payments.</h2><p>Paid orders, pending payments, abandoned carts and transaction references live together here.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="paidOrders">Paid orders</button><button data-subtab="pendingOrders">Pending payments</button><button data-subtab="abandonedOrders">Abandoned carts</button><button data-subtab="transactions">Transactions</button></div>
+        <section class="admin-subview active" id="paidOrders"><div class="toolbar"><input id="orderSearch" placeholder="Search order, customer or phone"><select id="orderFilter"><option value="all">All statuses</option><option>New</option><option>Preparing</option><option>Ready</option><option>Out for delivery</option><option>Completed</option></select></div><div class="admin-panel"><div class="responsive-list" id="ordersList"></div></div></section>
+        <section class="admin-subview" id="pendingOrders"><div class="admin-panel"><div class="panel-head"><div><span>PAYMENT QUEUE</span><h3>Pending payments</h3></div></div><div class="responsive-list" id="pendingPaymentsList"></div></div></section>
+        <section class="admin-subview" id="abandonedOrders"><div class="admin-panel"><div class="panel-head"><div><span>RECOVERY</span><h3>Abandoned carts</h3></div></div><div class="responsive-list" id="abandonedList"></div></div></section>
+        <section class="admin-subview" id="transactions"><div class="admin-panel"><div class="panel-head"><div><span>PAYSTACK</span><h3>Transactions</h3></div></div><div class="responsive-list" id="transactionList"></div></div></section>
+      </div>
+
+      <div class="admin-view" id="sales">
+        <div class="page-intro"><div><span>Performance</span><h2>Sales & giving.</h2><p>Understand what is selling and keep Feed the Street contributions organised.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="analyticsPane">Sales analytics</button><button data-subtab="donationsPane">Donations</button></div>
+        <section class="admin-subview active" id="analyticsPane"><div class="toolbar toolbar-end"><select id="analyticsRange" class="range-select"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All time</option></select></div><div class="metric-grid analytics-metrics"><div class="metric-card"><i class="fa-solid fa-cedi-sign"></i><span>Sales in range</span><b id="aRevenue">GHS 0</b><small>Paid orders</small></div><div class="metric-card"><i class="fa-solid fa-receipt"></i><span>Orders in range</span><b id="aOrders">0</b><small>Paid orders in period</small></div><div class="metric-card"><i class="fa-solid fa-chart-line"></i><span>Average order</span><b id="aAverage">GHS 0</b><small>Average order value</small></div><div class="metric-card"><i class="fa-solid fa-crown"></i><span>Top menu item</span><b id="aTop">No data</b><small>Based on ordered items</small></div></div><div class="analytics-layout"><div class="admin-panel"><div class="panel-head"><div><span>SALES TREND</span><h3>Order value by day</h3></div></div><div id="salesBars" class="sales-bars"></div></div><div class="admin-panel"><div class="panel-head"><div><span>BEST SELLERS</span><h3>What customers pick</h3></div></div><div id="topProducts" class="rank-list"></div></div></div></section>
+        <section class="admin-subview" id="donationsPane"><div class="page-mini-head"><div><span>FEED THE STREET TOTAL</span><strong class="donation-total" id="donationTotal">GHS 0</strong></div></div><div class="admin-panel"><div class="responsive-list" id="donationList"></div></div></section>
+      </div>
+
+      <div class="admin-view" id="store">
+        <div class="page-intro"><div><span>Store control</span><h2>Menu, inventory & promos.</h2><p>Edit what customers can order and what the team needs to restock.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="productsPane">Menu items</button><button data-subtab="inventoryPane">Inventory</button><button data-subtab="promosPane">Promos</button></div>
+        <section class="admin-subview active" id="productsPane"><div class="section-actions"><button class="primary" id="addProduct"><i class="fa-solid fa-plus"></i> Add menu item</button></div><div class="product-admin-grid" id="productList"></div></section>
+        <section class="admin-subview" id="inventoryPane"><div class="section-actions"><button class="primary" id="addInventory"><i class="fa-solid fa-plus"></i> Add stock item</button></div><div class="inventory-summary" id="inventorySummary"></div><div class="admin-panel"><div class="responsive-list" id="inventoryList"></div></div></section>
+        <section class="admin-subview" id="promosPane"><div class="section-actions"><button class="primary" id="addPromo"><i class="fa-solid fa-plus"></i> New promo</button></div><div class="admin-panel"><div class="responsive-list" id="promoList"></div></div></section>
+      </div>
+
+      <div class="admin-view" id="content">
+        <div class="page-intro"><div><span>Website content</span><h2>Homepage, gallery & team.</h2><p>Manage the visual parts of the site without touching code.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="slidesPane">Homepage slides</button><button data-subtab="galleryPane">Feed gallery</button><button data-subtab="teamPane">Team</button></div>
+        <section class="admin-subview active" id="slidesPane"><div class="section-actions"><button class="primary" id="addSlide"><i class="fa-solid fa-plus"></i> Add slide</button></div><div class="slide-admin-grid" id="slideList"></div></section>
+        <section class="admin-subview" id="galleryPane"><div class="section-actions"><button class="primary" id="addGallery"><i class="fa-solid fa-cloud-arrow-up"></i> Add photos</button></div><div class="gallery-note"><i class="fa-solid fa-grip"></i><span>Move photos earlier or later. The same order appears on the public Feed the Street gallery.</span></div><div class="admin-gallery" id="adminGallery"></div></section>
+        <section class="admin-subview" id="teamPane"><div class="team-sync-note"><i class="fa-solid fa-users"></i><div><strong>The same eight team profiles used on the public Team page are shown here.</strong><span>Every profile is editable, including name, bio, image and social links.</span></div></div><div class="team-admin-grid" id="teamList"></div></section>
+      </div>
+
+      <div class="admin-view" id="community">
+        <div class="page-intro"><div><span>People</span><h2>Reviews, customers & subscribers.</h2><p>Everything related to the people around the District.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="reviewsPane">Reviews</button><button data-subtab="customersPane">Customers</button><button data-subtab="subscribersPane">Subscribers</button></div>
+        <section class="admin-subview active" id="reviewsPane"><div class="admin-panel"><div class="responsive-list" id="reviewList"></div></div></section>
+        <section class="admin-subview" id="customersPane"><div class="admin-panel"><div class="toolbar"><input id="customerSearch" placeholder="Search customer, email or phone"></div><div class="responsive-list" id="customerList"></div></div></section>
+        <section class="admin-subview" id="subscribersPane"><div class="section-actions"><button class="secondary" id="exportSubscribers"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button></div><div class="metric-grid subscriber-metrics"><div class="metric-card"><i class="fa-solid fa-users"></i><span>Total subscribers</span><b id="subTotal">0</b><small>Saved signups</small></div><div class="metric-card"><i class="fa-solid fa-user-plus"></i><span>Joined this month</span><b id="subMonth">0</b><small>New this month</small></div></div><div class="admin-panel"><div class="toolbar"><input id="subscriberSearch" placeholder="Search email address"></div><div class="responsive-list" id="subscribersFullList"></div></div></section>
+      </div>
+
+      <div class="admin-view" id="inbox">
+        <div class="page-intro"><div><span>Inbox</span><h2>Messages & updates.</h2><p>Open a notification to jump to the exact task that needs attention.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="messagesPane">Messages</button><button data-subtab="notificationsPane">Notifications</button><button data-subtab="activityPane">Activity</button></div>
+        <section class="admin-subview active" id="messagesPane"><div class="admin-panel"><div id="contactList"></div></div><div id="subscriberList" hidden></div></section>
+        <section class="admin-subview" id="notificationsPane"><div class="admin-panel"><div class="responsive-list" id="notificationsList"></div></div></section>
+        <section class="admin-subview" id="activityPane"><div class="admin-panel"><div class="responsive-list" id="activityList"></div></div></section>
+      </div>
+
+      <div class="admin-view" id="settings">
+        <div class="page-intro"><div><span>Settings</span><h2>Website & account.</h2><p>Public contact details, launch checks and admin security in one place.</p></div></div>
+        <div class="admin-tabs"><button class="active" data-subtab="websiteSettingsPane">Website</button><button data-subtab="accountSettingsPane">Account & security</button></div>
+        <section class="admin-subview active" id="websiteSettingsPane"><div class="dashboard-grid"><div class="admin-panel"><form id="settingsForm" class="admin-form"><label>Business email<input name="businessEmail" type="email"></label><label>WhatsApp number<input name="whatsapp"></label><label>Instagram URL<input name="instagram"></label><label>TikTok URL<input name="tiktok"></label><label>Snapchat URL<input name="snapchat"></label><label>X URL<input name="x"></label><label>Facebook URL<input name="facebook"></label><button class="primary wide">Save website settings</button></form></div><div class="admin-panel setup-panel"><div class="panel-head"><div><span>SETUP CHECK</span><h3>Launch readiness</h3></div></div><div id="setupChecks"></div><button class="secondary" id="seedFirebase"><i class="fa-solid fa-seedling"></i> Copy default content to Firebase</button></div></div></section>
+        <section class="admin-subview" id="accountSettingsPane"><div class="dashboard-grid"><div class="admin-panel"><div class="panel-head"><div><span>ADMIN LOGIN</span><h3>Change email address</h3></div></div><p class="muted-copy">The Firebase project can stay under the developer account; this changes only the login used for District Control.</p><form id="changeEmailForm" class="admin-form single"><label>Current password<input required type="password" name="currentPassword" autocomplete="current-password"></label><label>New email<input required type="email" name="newEmail" autocomplete="email"></label><button class="primary wide">Change email</button></form></div><div class="admin-panel"><div class="panel-head"><div><span>SECURITY</span><h3>Change password</h3></div></div><p class="muted-copy">You stay signed in on this browser until you explicitly sign out.</p><form id="changePasswordForm" class="admin-form single"><label>Current password<input required type="password" name="currentPassword" autocomplete="current-password"></label><label>New password<input required minlength="6" type="password" name="newPassword" autocomplete="new-password"></label><label>Confirm new password<input required minlength="6" type="password" name="confirmPassword" autocomplete="new-password"></label><button class="primary wide">Change password</button></form></div></div></section>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="admin-drawer-backdrop" id="adminDrawerBackdrop"></div>
+<aside class="admin-drawer" id="adminDrawer"><div class="drawer-head"><div><span id="drawerKicker">DETAILS</span><h2 id="drawerTitle">Details</h2></div><button class="icon-square" id="drawerClose"><i class="fa-solid fa-xmark"></i></button></div><div class="drawer-body" id="drawerBody"></div></aside>
+<div class="admin-toast" id="adminToast"></div>
+<input type="file" id="hiddenImageInput" accept="image/*" hidden>
+<script src="images.js"></script><script src="config.js"></script><script src="firebase.js"></script><script src="cloudinary.js"></script><script src="data.js"></script><script src="admin.js"></script>
+</body>
+</html>

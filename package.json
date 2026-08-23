@@ -1,0 +1,9 @@
+{
+  "name": "wrap-district",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Wrap District website and Netlify payment functions",
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
