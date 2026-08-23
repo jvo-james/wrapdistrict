@@ -5,7 +5,1204 @@ const titles={overview:'Overview',orders:'Orders',sales:'Sales',store:'Store',co
 function openDrawer(title,kicker,content){$('#drawerTitle').textContent=title;$('#drawerKicker').textContent=kicker;$('#drawerBody').innerHTML=content;$('#adminDrawerBackdrop').classList.add('open');$('#adminDrawer').classList.add('open');document.body.style.overflow='hidden'}function closeDrawer(){$('#adminDrawerBackdrop').classList.remove('open');$('#adminDrawer').classList.remove('open');document.body.style.overflow=''}$('#drawerClose').onclick=closeDrawer;$('#adminDrawerBackdrop').onclick=closeDrawer;
 function statusBadge(s){const c=s==='Completed'?'on':s==='New'?'warn':'';return `<span class="badge ${c}">${esc(s||'New')}</span>`}function overview(){const all=rows('wdOrders'),os=all.filter(o=>(o.payment||o.paymentStatus)==='Paid'),pending=all.filter(o=>(o.payment||o.paymentStatus)!=='Paid'),rs=rows('wdReviews'),notifs=rows('wdNotifications');os.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));$('#mOrders').textContent=os.length;$('#mSales').textContent=money(os.reduce((a,x)=>a+Number(x.subtotal??x.total??0),0));$('#mPending').textContent=pending.length;$('#mReviews').textContent=rs.filter(x=>!x.approved).length;$('#todayLabel').textContent=new Date().toLocaleDateString('en-GH',{weekday:'long',day:'numeric',month:'long'});$('#latestOrders').innerHTML=os.length?os.slice(0,5).map(o=>`<div class="list-row" data-order="${esc(o.id)}"><div><h4>${esc(o.customer||o.name||'Customer')}</h4><small>${esc(o.id)}</small></div><div>${statusBadge(o.status)}</div><div><b>${money(o.subtotal??o.total)}</b></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No paid orders yet.</p>';const attention=[[pending.length,'Pending payments','Review checkout records waiting for confirmation','orders'],[rs.filter(x=>!x.approved).length,'Reviews waiting','Open the review queue','community'],[rows('wdInventory',WD_DEFAULT_INVENTORY||[]).filter(x=>Number(x.quantity)<=Number(x.lowAt)).length,'Stock items low','Check inventory levels','store'],[notifs.filter(x=>!x.read).length,'Unread notifications','See recent store updates','inbox']];$('#attentionList').innerHTML=attention.map(x=>`<button class="attention-item text-btn" data-attention="${x[3]}"><i class="fa-solid fa-circle-exclamation"></i><span><b>${x[0]} ${x[1]}</b><span>${x[2]}</span></span></button>`).join('');$$('[data-order]').forEach(b=>b.onclick=()=>orderDrawer(b.dataset.order));$$('[data-attention]').forEach(b=>b.onclick=()=>go(b.dataset.attention));const openOrders=os.filter(x=>(x.status||'New')!=='Completed').length;$('#ordersNavCount').textContent=openOrders;$('#ordersNavCount').hidden=!openOrders;const waitingReviews=rs.filter(x=>!x.approved).length;$('#reviewsNavCount').textContent=waitingReviews;$('#reviewsNavCount').hidden=!waitingReviews;const inboxCount=rows('wdContacts').length+notifs.filter(x=>!x.read).length;$('#messagesNavCount').textContent=inboxCount;$('#messagesNavCount').hidden=!inboxCount;const unavailable=rows('wdProducts',WD_PRODUCTS).filter(x=>x.available===false).length;$('#productsNavCount').textContent=unavailable;$('#productsNavCount').hidden=!unavailable;renderNotificationPopover()}function orderDrawer(id){const o=rows('wdOrders').find(x=>String(x.id)===String(id));if(!o)return;const flow=['New','Preparing','Ready','Out for delivery','Completed'];const paid=(o.payment||o.paymentStatus)==='Paid';openDrawer(`Order ${o.id}`,'ORDER DETAILS',`<div class="drawer-section"><div class="drawer-grid"><div><small>CUSTOMER</small><h3>${esc(o.customer||o.name||'Customer')}</h3><p>${esc(o.phone||'No phone')}</p><p>${esc(o.email||'No email')}</p></div><div><small>PAYMENT</small><h3>${money(o.total)}</h3><p><span class="badge ${paid?'on':'warn'}">${paid?'PAID':'PENDING'}</span></p><p>${esc(o.reference||o.paystackReference||'No payment reference yet')}</p></div></div></div><div class="drawer-section"><h3>Fulfilment</h3><p><b>${esc(o.type||o.fulfilment||'Not set')}</b></p><p>${esc(o.address||'No delivery address saved')}</p><p>${esc(o.note||o.notes||'')}</p></div><div class="drawer-section"><h3>What they ordered</h3>${(o.items||[]).map(x=>`<p><b>${esc(x.qty||1)} × ${esc(x.name)}</b><br><small>${esc(x.detail||'')}</small></p>`).join('')||'<p>No item details saved.</p>'}</div>${paid?`<div class="drawer-section"><div class="field"><label>Status</label><select id="orderStatus">${flow.map(x=>`<option ${x===(o.status||'New')?'selected':''}>${x}</option>`).join('')}</select></div><div class="field" style="margin-top:12px"><label>Admin note</label><textarea id="orderAdminNote" placeholder="Private note for the team">${esc(o.adminNote||'')}</textarea></div></div><div class="drawer-actions"><button class="primary" id="saveOrder">Save order update</button></div>`:''}`);if(paid&&$('#saveOrder'))$('#saveOrder').onclick=async e=>{const b=e.currentTarget;busy(b,true);try{o.status=$('#orderStatus').value;o.adminNote=$('#orderAdminNote').value.trim();await save('orders',o);renderAll();toast('Order updated.');closeDrawer()}catch(err){console.error(err);toast('We could not save this order. Try again.')}finally{busy(b,false)}}}function orders(){const draw=()=>{const q=$('#orderSearch').value.toLowerCase(),f=$('#orderFilter').value;const a=rows('wdOrders').filter(o=>(o.payment||o.paymentStatus)==='Paid').filter(o=>(f==='all'||(o.status||'New')===f)&&[o.id,o.customer,o.name,o.phone,o.email].join(' ').toLowerCase().includes(q)).sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));$('#ordersList').innerHTML=a.length?a.map(o=>`<div class="list-row" data-order="${esc(o.id)}"><div><h4>${esc(o.customer||o.name||'Customer')}</h4><small>${esc(o.id)} · ${new Date(o.createdAt||o.date||Date.now()).toLocaleString()}</small></div><div>${statusBadge(o.status)}</div><div><b>${money(o.total)}</b><small>${esc(o.type||o.fulfilment||'')}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No paid orders match this view.</p>';$$('[data-order]').forEach(b=>b.onclick=()=>orderDrawer(b.dataset.order))};$('#orderSearch').oninput=draw;$('#orderFilter').onchange=draw;draw()}function uploadBox(id,url=''){return `<div class="image-drop" id="${id}" tabindex="0">${url?`<img src="${esc(url)}" alt="Current image">`:''}<div class="upload-copy"><i class="fa-solid fa-cloud-arrow-up"></i><br><b>${url?'Change image':'Choose an image'}</b><br><small>The preview appears here before saving.</small></div></div>`}async function chooseImage(box,folder){return new Promise(resolve=>{const input=$('#hiddenImageInput');input.value='';input.onchange=async()=>{const file=input.files[0];if(!file)return resolve(null);const old=box.innerHTML;box.classList.add('loading');box.innerHTML=`<div class="upload-copy"><i class="fa-solid fa-spinner fa-spin"></i><br><b>Uploading image</b><br><small>Please wait a moment.</small></div>`;try{const up=await WD_CLOUDINARY.upload(file,folder);box.innerHTML=`<img src="${up.url}" alt="Uploaded preview"><div class="upload-copy"><i class="fa-solid fa-check"></i><br><b>Image ready</b></div>`;box.dataset.url=up.url;resolve(up)}catch(err){box.innerHTML=old;toast('The image could not be uploaded. Check the file and try again.');resolve(null)}finally{box.classList.remove('loading')}};input.click()})}
 function products(){const a=rows('wdProducts',WD_PRODUCTS);$('#productList').innerHTML=a.map(p=>`<article class="admin-card" data-product="${esc(p.id)}"><div class="admin-card-media"><img src="${esc(p.image)}" alt=""><span class="badge ${p.available!==false?'on':'off'}">${p.available!==false?'AVAILABLE':'UNAVAILABLE'}</span></div><div class="admin-card-copy"><small>${esc(p.category)}</small><h3>${esc(p.name)}</h3><p>${esc(p.tagline||p.description||'')}</p><div class="admin-card-foot"><b>From ${money(p.from)}</b><span class="small-btn">Edit <i class="fa-solid fa-arrow-right"></i></span></div></div></article>`).join('');$$('[data-product]').forEach(b=>b.onclick=()=>productDrawer(b.dataset.product))}
-function productDrawer(id,newItem=false){const a=rows('wdProducts',WD_PRODUCTS),p=newItem?{id:uid('product'),name:'',category:'',from:0,tagline:'',description:'',image:'',sizes:[['Regular',0]],sizeImages:[''],extras:[],available:true}:JSON.parse(JSON.stringify(a.find(x=>x.id===id)));const original=WD_PRODUCTS.find(x=>String(x.id)===String(p.id));const picker=(type,i,url,label)=>`<div class="image-picker-row" data-picker="${type}" data-index="${i}" data-url="${esc(url||'')}"><div class="image-picker-thumb">${url?`<img src="${esc(url)}" alt="${esc(label)}">`:'<i class="fa-regular fa-image"></i>'}</div><div class="picker-copy"><b>${esc(label)}</b><small>${url?'Image selected':'Uses the main product image until you add one.'}</small></div><div class="picker-actions"><button type="button" class="upload-image-btn" data-pick-image><i class="fa-solid fa-camera"></i> Replace</button><button type="button" class="reset-image-btn" data-reset-row-image>Original</button></div></div>`;const sizeRows=()=>p.sizes.map((x,i)=>`<div class="portion-edit" data-size-row><div class="repeat-row"><input data-sn value="${esc(x[0])}" placeholder="Portion name"><input data-sp type="number" min="0" step="0.01" value="${x[1]}"><button type="button" data-remove-size><i class="fa-solid fa-xmark"></i></button></div>${picker('size',i,(p.sizeImages||[])[i]||p.image,`${x[0]||'Portion'} image`)}</div>`).join('');const extraRows=()=>p.extras.map((x,i)=>`<div class="portion-edit" data-extra-row><div class="repeat-row extra"><input data-en value="${esc(x[0])}" placeholder="Extra name"><input data-ep type="number" min="0" step="0.01" value="${x[1]}"><button type="button" data-remove-extra><i class="fa-solid fa-xmark"></i></button></div>${picker('extra',i,x[2]||p.image,`${x[0]||'Extra'} image`)}</div>`).join('');openDrawer(newItem?'Add menu item':p.name,'MENU ITEM',`<div class="drawer-section">${uploadBox('productImage',p.image)}${original?'<button type="button" class="reset-image-btn" id="resetProductImage" style="margin-top:9px"><i class="fa-solid fa-rotate-left"></i> Use original product image</button>':''}<div class="drawer-grid" style="margin-top:14px"><div class="field"><label>Product name</label><input id="pName" value="${esc(p.name)}"></div><div class="field"><label>Category</label><input id="pCategory" value="${esc(p.category)}"></div><div class="field"><label>Short line</label><input id="pTagline" value="${esc(p.tagline||'')}"></div><div class="field"><label>Available to order</label><select id="pAvailable"><option value="yes" ${p.available!==false?'selected':''}>Yes, customers can order it</option><option value="no" ${p.available===false?'selected':''}>No, mark it unavailable</option></select></div></div><div class="field" style="margin-top:12px"><label>Description</label><textarea id="pDescription">${esc(p.description||'')}</textarea></div></div><div class="drawer-section"><h3>Portions and prices</h3><p><small>Each portion can have its own photo. Use Replace to choose it from your device.</small></p><div id="sizeRows">${sizeRows()}</div><button class="add-row" id="addSize" type="button"><i class="fa-solid fa-plus"></i> Add another portion</button></div><div class="drawer-section"><h3>Extras</h3><p><small>Add an image for each extra so customers can recognise it while building an order.</small></p><div id="extraRows">${extraRows()}</div><button class="add-row" id="addExtra" type="button"><i class="fa-solid fa-plus"></i> Add another extra</button></div><div class="drawer-actions"><button class="primary" id="saveProduct">${newItem?'Create menu item':'Save menu item'}</button></div>`);const img=$('#productImage');img.onclick=()=>chooseImage(img,'products');if($('#resetProductImage'))$('#resetProductImage').onclick=()=>{img.dataset.url=original.image;img.innerHTML=`<img src="${esc(original.image)}" alt="Original product image"><div class="upload-copy"><i class="fa-solid fa-rotate-left"></i><br><b>Original image restored</b></div>`};function bindRows(){const sizeEls=$$('[data-size-row]');sizeEls.forEach((row,i)=>{row.querySelector('[data-picker]').dataset.index=i});const extraEls=$$('[data-extra-row]');extraEls.forEach((row,i)=>{row.querySelector('[data-picker]').dataset.index=i});$$('[data-remove-size]').forEach(b=>b.onclick=()=>{if($$('[data-size-row]').length===1)return toast('Keep at least one portion.');b.closest('[data-size-row]').remove();bindRows()});$$('[data-remove-extra]').forEach(b=>b.onclick=()=>{b.closest('[data-extra-row]').remove();bindRows()});$$('[data-pick-image]').forEach(b=>b.onclick=async()=>{const card=b.closest('[data-picker]'),thumb=card.querySelector('.image-picker-thumb'),old=b.innerHTML;b.disabled=true;b.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Uploading';const pseudo=document.createElement('div');try{const up=await chooseImage(pseudo,card.dataset.picker==='size'?'product-portions':'product-extras');if(up){card.dataset.url=up.url;thumb.innerHTML=`<img src="${esc(up.url)}" alt="Uploaded image">`;card.querySelector('small').textContent='New image ready to save.'}}finally{b.disabled=false;b.innerHTML=old}});$$('[data-reset-row-image]').forEach(b=>b.onclick=()=>{const card=b.closest('[data-picker]'),i=+card.dataset.index,type=card.dataset.picker;let url='';if(original){url=type==='size'?(original.sizeImages||[])[i]||original.image:(original.extras||[])[i]?.[2]||original.image}else url=img.dataset.url||p.image;card.dataset.url=url;card.querySelector('.image-picker-thumb').innerHTML=url?`<img src="${esc(url)}" alt="Original image">`:'<i class="fa-regular fa-image"></i>';card.querySelector('small').textContent='Original image restored.'})}bindRows();$('#addSize').onclick=()=>{$('#sizeRows').insertAdjacentHTML('beforeend',`<div class="portion-edit" data-size-row><div class="repeat-row"><input data-sn placeholder="Portion name"><input data-sp type="number" min="0" step="0.01" value="0"><button type="button" data-remove-size><i class="fa-solid fa-xmark"></i></button></div>${picker('size',$$('[data-size-row]').length,img.dataset.url||p.image,'New portion image')}</div>`);bindRows()};$('#addExtra').onclick=()=>{$('#extraRows').insertAdjacentHTML('beforeend',`<div class="portion-edit" data-extra-row><div class="repeat-row extra"><input data-en placeholder="Extra name"><input data-ep type="number" min="0" step="0.01" value="0"><button type="button" data-remove-extra><i class="fa-solid fa-xmark"></i></button></div>${picker('extra',$$('[data-extra-row]').length,img.dataset.url||p.image,'New extra image')}</div>`);bindRows()};$('#saveProduct').onclick=async e=>{const b=e.currentTarget;busy(b,true,newItem?'Creating':'Saving');try{p.name=$('#pName').value.trim();p.category=$('#pCategory').value.trim();p.tagline=$('#pTagline').value.trim();p.description=$('#pDescription').value.trim();p.available=$('#pAvailable').value==='yes';p.image=img.dataset.url||p.image||WD_IMAGES.productFallback;const sizeRowsNow=$$('[data-size-row]');p.sizes=sizeRowsNow.map(r=>[$('[data-sn]',r).value.trim()||'Portion',Number($('[data-sp]',r).value)]);if(!p.name)throw new Error('Add the product name.');if(!p.category)throw new Error('Add the product category.');if(!p.sizes.length||p.sizes.some(x=>!Number.isFinite(x[1])||x[1]<=0))throw new Error('Every portion needs a price greater than zero.');p.sizeImages=sizeRowsNow.map(r=>$('[data-picker]',r)?.dataset.url||p.image);p.extras=$$('[data-extra-row]').map(r=>[$('[data-en]',r).value.trim(),Number($('[data-ep]',r).value)||0,$('[data-picker]',r)?.dataset.url||p.image]).filter(x=>x[0]);p.from=Math.min(...p.sizes.map(x=>x[1]));await save('products',p);renderAll();toast(newItem?'Menu item created.':'Menu item saved.');closeDrawer()}catch(err){console.error('[Wrap District] menu item save failed',err);toast(err.message||'The menu item could not be saved. Please try again.')}finally{busy(b,false)}}}$('#addProduct').onclick=()=>productDrawer(null,true);
+
+      function productDrawer(id,newItem=false){
+
+  const a = rows('wdProducts', WD_PRODUCTS);
+
+  const p = newItem
+    ? {
+        id: uid('product'),
+        name: '',
+        category: '',
+        from: 0,
+        tagline: '',
+        description: '',
+        image: '',
+        sizes: [
+          {
+            name: 'Regular',
+            price: 0
+          }
+        ],
+        sizeImages: [''],
+        extras: [],
+        available: true
+      }
+    : JSON.parse(
+        JSON.stringify(
+          a.find(x => x.id === id)
+        )
+      );
+
+
+  const original = WD_PRODUCTS.find(
+    x => String(x.id) === String(p.id)
+  );
+
+
+  // --------------------------------------------------
+  // NORMALISE OLD + NEW DATA FORMATS
+  // --------------------------------------------------
+
+  // Supports old:
+  // ['Regular', 40]
+  //
+  // And new:
+  // { name:'Regular', price:40 }
+
+  p.sizes = (p.sizes || []).map(x => ({
+    name:
+      x?.name ??
+      x?.[0] ??
+      'Portion',
+
+    price:
+      Number(
+        x?.price ??
+        x?.[1] ??
+        0
+      )
+  }));
+
+
+  // Supports old:
+  // ['Cheese', 5, 'image.jpg']
+  //
+  // And new:
+  // { name:'Cheese', price:5, image:'image.jpg' }
+
+  p.extras = (p.extras || []).map(x => ({
+    name:
+      x?.name ??
+      x?.[0] ??
+      '',
+
+    price:
+      Number(
+        x?.price ??
+        x?.[1] ??
+        0
+      ),
+
+    image:
+      x?.image ??
+      x?.[2] ??
+      p.image ??
+      ''
+  }));
+
+
+  if(!p.sizes.length){
+    p.sizes = [
+      {
+        name: 'Regular',
+        price: 0
+      }
+    ];
+  }
+
+
+  // --------------------------------------------------
+  // IMAGE PICKER
+  // --------------------------------------------------
+
+  const picker = (
+    type,
+    i,
+    url,
+    label
+  ) => `
+    <div
+      class="image-picker-row"
+      data-picker="${type}"
+      data-index="${i}"
+      data-url="${esc(url || '')}"
+    >
+
+      <div class="image-picker-thumb">
+        ${
+          url
+            ? `<img
+                 src="${esc(url)}"
+                 alt="${esc(label)}"
+               >`
+            : '<i class="fa-regular fa-image"></i>'
+        }
+      </div>
+
+
+      <div class="picker-copy">
+
+        <b>
+          ${esc(label)}
+        </b>
+
+        <small>
+          ${
+            url
+              ? 'Image selected'
+              : 'Uses the main product image until you add one.'
+          }
+        </small>
+
+      </div>
+
+
+      <div class="picker-actions">
+
+        <button
+          type="button"
+          class="upload-image-btn"
+          data-pick-image
+        >
+          <i class="fa-solid fa-camera"></i>
+          Replace
+        </button>
+
+
+        <button
+          type="button"
+          class="reset-image-btn"
+          data-reset-row-image
+        >
+          Original
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+
+  // --------------------------------------------------
+  // PORTION ROWS
+  // --------------------------------------------------
+
+  const sizeRows = () =>
+    p.sizes.map((x,i) => {
+
+      const sizeName =
+        x?.name ??
+        x?.[0] ??
+        '';
+
+      const sizePrice =
+        x?.price ??
+        x?.[1] ??
+        0;
+
+
+      const sizeImage =
+        (p.sizeImages || [])[i] ||
+        p.image ||
+        '';
+
+
+      return `
+        <div
+          class="portion-edit"
+          data-size-row
+        >
+
+          <div class="repeat-row">
+
+            <input
+              data-sn
+              value="${esc(sizeName)}"
+              placeholder="Portion name"
+            >
+
+            <input
+              data-sp
+              type="number"
+              min="0"
+              step="0.01"
+              value="${Number(sizePrice || 0)}"
+            >
+
+            <button
+              type="button"
+              data-remove-size
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+
+          </div>
+
+
+          ${picker(
+            'size',
+            i,
+            sizeImage,
+            `${sizeName || 'Portion'} image`
+          )}
+
+        </div>
+      `;
+    }).join('');
+
+
+  // --------------------------------------------------
+  // EXTRA ROWS
+  // --------------------------------------------------
+
+  const extraRows = () =>
+    p.extras.map((x,i) => {
+
+      const extraName =
+        x?.name ??
+        x?.[0] ??
+        '';
+
+      const extraPrice =
+        x?.price ??
+        x?.[1] ??
+        0;
+
+      const extraImage =
+        x?.image ??
+        x?.[2] ??
+        p.image ??
+        '';
+
+
+      return `
+        <div
+          class="portion-edit"
+          data-extra-row
+        >
+
+          <div class="repeat-row extra">
+
+            <input
+              data-en
+              value="${esc(extraName)}"
+              placeholder="Extra name"
+            >
+
+            <input
+              data-ep
+              type="number"
+              min="0"
+              step="0.01"
+              value="${Number(extraPrice || 0)}"
+            >
+
+            <button
+              type="button"
+              data-remove-extra
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+
+          </div>
+
+
+          ${picker(
+            'extra',
+            i,
+            extraImage,
+            `${extraName || 'Extra'} image`
+          )}
+
+        </div>
+      `;
+    }).join('');
+
+
+  // --------------------------------------------------
+  // OPEN DRAWER
+  // --------------------------------------------------
+
+  openDrawer(
+    newItem
+      ? 'Add menu item'
+      : p.name,
+
+    'MENU ITEM',
+
+    `
+
+    <div class="drawer-section">
+
+      ${uploadBox(
+        'productImage',
+        p.image
+      )}
+
+
+      ${
+        original
+          ? `
+            <button
+              type="button"
+              class="reset-image-btn"
+              id="resetProductImage"
+              style="margin-top:9px"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              Use original product image
+            </button>
+          `
+          : ''
+      }
+
+
+      <div
+        class="drawer-grid"
+        style="margin-top:14px"
+      >
+
+        <div class="field">
+
+          <label>
+            Product name
+          </label>
+
+          <input
+            id="pName"
+            value="${esc(p.name)}"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Category
+          </label>
+
+          <input
+            id="pCategory"
+            value="${esc(p.category)}"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Short line
+          </label>
+
+          <input
+            id="pTagline"
+            value="${esc(p.tagline || '')}"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Available to order
+          </label>
+
+          <select id="pAvailable">
+
+            <option
+              value="yes"
+              ${
+                p.available !== false
+                  ? 'selected'
+                  : ''
+              }
+            >
+              Yes, customers can order it
+            </option>
+
+            <option
+              value="no"
+              ${
+                p.available === false
+                  ? 'selected'
+                  : ''
+              }
+            >
+              No, mark it unavailable
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="field"
+        style="margin-top:12px"
+      >
+
+        <label>
+          Description
+        </label>
+
+        <textarea id="pDescription">${esc(
+          p.description || ''
+        )}</textarea>
+
+      </div>
+
+    </div>
+
+
+    <div class="drawer-section">
+
+      <h3>
+        Portions and prices
+      </h3>
+
+      <p>
+        <small>
+          Each portion can have its own photo.
+          Use Replace to choose it from your device.
+        </small>
+      </p>
+
+
+      <div id="sizeRows">
+        ${sizeRows()}
+      </div>
+
+
+      <button
+        class="add-row"
+        id="addSize"
+        type="button"
+      >
+        <i class="fa-solid fa-plus"></i>
+        Add another portion
+      </button>
+
+    </div>
+
+
+    <div class="drawer-section">
+
+      <h3>
+        Extras
+      </h3>
+
+      <p>
+        <small>
+          Add an image for each extra so customers
+          can recognise it while building an order.
+        </small>
+      </p>
+
+
+      <div id="extraRows">
+        ${extraRows()}
+      </div>
+
+
+      <button
+        class="add-row"
+        id="addExtra"
+        type="button"
+      >
+        <i class="fa-solid fa-plus"></i>
+        Add another extra
+      </button>
+
+    </div>
+
+
+    <div class="drawer-actions">
+
+      <button
+        class="primary"
+        id="saveProduct"
+      >
+        ${
+          newItem
+            ? 'Create menu item'
+            : 'Save menu item'
+        }
+      </button>
+
+    </div>
+
+    `
+  );
+
+
+  // --------------------------------------------------
+  // MAIN PRODUCT IMAGE
+  // --------------------------------------------------
+
+  const img =
+    $('#productImage');
+
+
+  img.onclick = () =>
+    chooseImage(
+      img,
+      'products'
+    );
+
+
+  if($('#resetProductImage')){
+
+    $('#resetProductImage').onclick = () => {
+
+      const originalImage =
+        original?.image ||
+        p.image ||
+        '';
+
+
+      img.dataset.url =
+        originalImage;
+
+
+      img.innerHTML =
+        originalImage
+          ? `
+            <img
+              src="${esc(originalImage)}"
+              alt="Original product image"
+            >
+
+            <div class="upload-copy">
+              <i class="fa-solid fa-rotate-left"></i>
+              <br>
+              <b>
+                Original image restored
+              </b>
+            </div>
+          `
+          : `
+            <div class="upload-copy">
+              <i class="fa-regular fa-image"></i>
+              <br>
+              <b>
+                No original image
+              </b>
+            </div>
+          `;
+    };
+  }
+
+
+  // --------------------------------------------------
+  // BIND PORTION + EXTRA CONTROLS
+  // --------------------------------------------------
+
+  function bindRows(){
+
+    const sizeEls =
+      $$('[data-size-row]');
+
+
+    sizeEls.forEach(
+      (row,i) => {
+
+        const card =
+          row.querySelector(
+            '[data-picker]'
+          );
+
+        if(card){
+          card.dataset.index = i;
+        }
+      }
+    );
+
+
+    const extraEls =
+      $$('[data-extra-row]');
+
+
+    extraEls.forEach(
+      (row,i) => {
+
+        const card =
+          row.querySelector(
+            '[data-picker]'
+          );
+
+        if(card){
+          card.dataset.index = i;
+        }
+      }
+    );
+
+
+    $$('[data-remove-size]')
+      .forEach(b => {
+
+        b.onclick = () => {
+
+          if(
+            $$('[data-size-row]')
+              .length === 1
+          ){
+            return toast(
+              'Keep at least one portion.'
+            );
+          }
+
+
+          b.closest(
+            '[data-size-row]'
+          )?.remove();
+
+
+          bindRows();
+        };
+      });
+
+
+    $$('[data-remove-extra]')
+      .forEach(b => {
+
+        b.onclick = () => {
+
+          b.closest(
+            '[data-extra-row]'
+          )?.remove();
+
+
+          bindRows();
+        };
+      });
+
+
+    $$('[data-pick-image]')
+      .forEach(b => {
+
+        b.onclick = async () => {
+
+          const card =
+            b.closest(
+              '[data-picker]'
+            );
+
+
+          const thumb =
+            card.querySelector(
+              '.image-picker-thumb'
+            );
+
+
+          const old =
+            b.innerHTML;
+
+
+          b.disabled =
+            true;
+
+
+          b.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Uploading';
+
+
+          const pseudo =
+            document.createElement(
+              'div'
+            );
+
+
+          try{
+
+            const up =
+              await chooseImage(
+                pseudo,
+                card.dataset.picker === 'size'
+                  ? 'product-portions'
+                  : 'product-extras'
+              );
+
+
+            if(up){
+
+              card.dataset.url =
+                up.url;
+
+
+              thumb.innerHTML =
+                `
+                  <img
+                    src="${esc(up.url)}"
+                    alt="Uploaded image"
+                  >
+                `;
+
+
+              const note =
+                card.querySelector(
+                  'small'
+                );
+
+
+              if(note){
+                note.textContent =
+                  'New image ready to save.';
+              }
+            }
+
+
+          }finally{
+
+            b.disabled =
+              false;
+
+
+            b.innerHTML =
+              old;
+          }
+        };
+      });
+
+
+    $$('[data-reset-row-image]')
+      .forEach(b => {
+
+        b.onclick = () => {
+
+          const card =
+            b.closest(
+              '[data-picker]'
+            );
+
+
+          const i =
+            Number(
+              card.dataset.index || 0
+            );
+
+
+          const type =
+            card.dataset.picker;
+
+
+          let url = '';
+
+
+          if(original){
+
+            if(type === 'size'){
+
+              url =
+                (original.sizeImages || [])[i] ||
+                original.image ||
+                '';
+
+            }else{
+
+              const oldExtra =
+                (original.extras || [])[i];
+
+
+              url =
+                oldExtra?.image ??
+                oldExtra?.[2] ??
+                original.image ??
+                '';
+            }
+
+          }else{
+
+            url =
+              img.dataset.url ||
+              p.image ||
+              '';
+          }
+
+
+          card.dataset.url =
+            url;
+
+
+          card.querySelector(
+            '.image-picker-thumb'
+          ).innerHTML =
+            url
+              ? `
+                <img
+                  src="${esc(url)}"
+                  alt="Original image"
+                >
+              `
+              : '<i class="fa-regular fa-image"></i>';
+
+
+          const note =
+            card.querySelector(
+              'small'
+            );
+
+
+          if(note){
+
+            note.textContent =
+              'Original image restored.';
+          }
+        };
+      });
+  }
+
+
+  bindRows();
+
+
+  // --------------------------------------------------
+  // ADD PORTION
+  // --------------------------------------------------
+
+  $('#addSize').onclick = () => {
+
+    const index =
+      $$('[data-size-row]').length;
+
+
+    $('#sizeRows')
+      .insertAdjacentHTML(
+        'beforeend',
+        `
+
+        <div
+          class="portion-edit"
+          data-size-row
+        >
+
+          <div class="repeat-row">
+
+            <input
+              data-sn
+              placeholder="Portion name"
+            >
+
+            <input
+              data-sp
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            >
+
+            <button
+              type="button"
+              data-remove-size
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+
+          </div>
+
+
+          ${picker(
+            'size',
+            index,
+            img.dataset.url ||
+              p.image,
+            'New portion image'
+          )}
+
+        </div>
+
+        `
+      );
+
+
+    bindRows();
+  };
+
+
+  // --------------------------------------------------
+  // ADD EXTRA
+  // --------------------------------------------------
+
+  $('#addExtra').onclick = () => {
+
+    const index =
+      $$('[data-extra-row]').length;
+
+
+    $('#extraRows')
+      .insertAdjacentHTML(
+        'beforeend',
+        `
+
+        <div
+          class="portion-edit"
+          data-extra-row
+        >
+
+          <div class="repeat-row extra">
+
+            <input
+              data-en
+              placeholder="Extra name"
+            >
+
+            <input
+              data-ep
+              type="number"
+              min="0"
+              step="0.01"
+              value="0"
+            >
+
+            <button
+              type="button"
+              data-remove-extra
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+
+          </div>
+
+
+          ${picker(
+            'extra',
+            index,
+            img.dataset.url ||
+              p.image,
+            'New extra image'
+          )}
+
+        </div>
+
+        `
+      );
+
+
+    bindRows();
+  };
+
+
+  // --------------------------------------------------
+  // SAVE PRODUCT
+  // --------------------------------------------------
+
+  $('#saveProduct').onclick =
+    async e => {
+
+      const b =
+        e.currentTarget;
+
+
+      busy(
+        b,
+        true,
+        newItem
+          ? 'Creating'
+          : 'Saving'
+      );
+
+
+      try{
+
+        p.name =
+          $('#pName')
+            .value
+            .trim();
+
+
+        p.category =
+          $('#pCategory')
+            .value
+            .trim();
+
+
+        p.tagline =
+          $('#pTagline')
+            .value
+            .trim();
+
+
+        p.description =
+          $('#pDescription')
+            .value
+            .trim();
+
+
+        p.available =
+          $('#pAvailable')
+            .value === 'yes';
+
+
+        p.image =
+          img.dataset.url ||
+          p.image ||
+          WD_IMAGES.productFallback;
+
+
+        // ------------------------------------------
+        // VALIDATE BASIC FIELDS
+        // ------------------------------------------
+
+        if(!p.name){
+
+          throw new Error(
+            'Add the product name.'
+          );
+        }
+
+
+        if(!p.category){
+
+          throw new Error(
+            'Add the product category.'
+          );
+        }
+
+
+        // ------------------------------------------
+        // FIRESTORE-SAFE PORTIONS
+        // ------------------------------------------
+
+        const sizeRowsNow =
+          $$('[data-size-row]');
+
+
+        p.sizes =
+          sizeRowsNow.map(r => ({
+
+            name:
+              $('[data-sn]',r)
+                .value
+                .trim() ||
+              'Portion',
+
+            price:
+              Number(
+                $('[data-sp]',r)
+                  .value ||
+                0
+              )
+
+          }));
+
+
+        if(
+          !p.sizes.length ||
+          p.sizes.some(
+            x =>
+              !Number.isFinite(
+                x.price
+              ) ||
+              x.price <= 0
+          )
+        ){
+
+          throw new Error(
+            'Every portion needs a price greater than zero.'
+          );
+        }
+
+
+        p.sizeImages =
+          sizeRowsNow.map(
+            r =>
+              $('[data-picker]',r)
+                ?.dataset
+                .url ||
+              p.image
+          );
+
+
+        // ------------------------------------------
+        // FIRESTORE-SAFE EXTRAS
+        // ------------------------------------------
+
+        p.extras =
+          $$('[data-extra-row]')
+
+            .map(r => ({
+
+              name:
+                $('[data-en]',r)
+                  .value
+                  .trim(),
+
+              price:
+                Number(
+                  $('[data-ep]',r)
+                    .value ||
+                  0
+                ),
+
+              image:
+                $('[data-picker]',r)
+                  ?.dataset
+                  .url ||
+                p.image
+
+            }))
+
+            .filter(
+              x => x.name
+            );
+
+
+        // ------------------------------------------
+        // LOWEST DISPLAY PRICE
+        // ------------------------------------------
+
+        p.from =
+          Math.min(
+            ...p.sizes.map(
+              x => x.price
+            )
+          );
+
+
+        // ------------------------------------------
+        // SAVE
+        // ------------------------------------------
+
+        await save(
+          'products',
+          p
+        );
+
+
+        renderAll();
+
+
+        toast(
+          newItem
+            ? 'Menu item created.'
+            : 'Menu item saved.'
+        );
+
+
+        closeDrawer();
+
+
+      }catch(err){
+
+        console.error(
+          '[Wrap District] menu item save failed',
+          err
+        );
+
+
+        toast(
+          err.message ||
+          'The menu item could not be saved. Please try again.'
+        );
+
+
+      }finally{
+
+        busy(
+          b,
+          false
+        );
+      }
+    };
+}
+      
+      $('#addProduct').onclick=()=>productDrawer(null,true);
 function promotions(){const a=rows('wdPromos');$('#promoList').innerHTML=a.length?a.map(p=>`<div class="list-row" data-promo="${p.id}"><div><h4>${esc(p.title)}</h4><small>${esc(p.subtitle||'')}</small></div><div><span class="badge ${p.active?'on':'off'}">${p.active?'LIVE':'OFF'}</span></div><div><small>${p.start||p.end?`${esc(p.start||'Any time')} to ${esc(p.end||'No end')}`:'No schedule set'}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No promos yet.</p>';$$('[data-promo]').forEach(b=>b.onclick=()=>promoDrawer(b.dataset.promo))}function promoDrawer(id,newItem=false){const p=newItem?{id:uid('promo'),title:'',subtitle:'',cta:'Order now',image:'',active:false,start:'',end:''}:JSON.parse(JSON.stringify(rows('wdPromos').find(x=>x.id===id)));openDrawer(newItem?'New promo':p.title,'PROMO',`<div class="drawer-section">${uploadBox('promoImage',p.image)}${!newItem?'<button type="button" class="reset-image-btn" id="resetPromoImage" style="margin-top:9px">Use original image</button>':''}<div class="field" style="margin-top:12px"><label>Promo title</label><input id="prTitle" value="${esc(p.title)}"></div><div class="field"><label>Message customers will see</label><textarea id="prSubtitle">${esc(p.subtitle||'')}</textarea></div><div class="drawer-grid"><div class="field"><label>Button text</label><input id="prCta" value="${esc(p.cta||'Order now')}"></div><div class="field"><label>Status</label><select id="prActive"><option value="yes" ${p.active?'selected':''}>Live</option><option value="no" ${!p.active?'selected':''}>Not live</option></select></div><div class="field"><label>Start date</label><input type="date" id="prStart" value="${esc(p.start||'')}"></div><div class="field"><label>End date</label><input type="date" id="prEnd" value="${esc(p.end||'')}"></div></div></div><div class="drawer-actions"><button class="primary" id="savePromo">${newItem?'Create promo':'Save promo'}</button>${newItem?'':`<button class="small-btn danger" id="deletePromo">Remove promo</button>`}</div>`);const im=$('#promoImage');im.onclick=()=>chooseImage(im,'promos');if($('#resetPromoImage'))$('#resetPromoImage').onclick=()=>{const o=WD_DEFAULT_PROMOS.find(x=>String(x.id)===String(p.id));if(!o)return toast('This promo was created in the admin, so it has no original image.');im.dataset.url=o.image;im.innerHTML=`<img src="${esc(o.image)}" alt="Original promo image"><div class="upload-copy"><b>Original image restored</b></div>`};$('#savePromo').onclick=async e=>{busy(e.currentTarget,true);try{p.title=$('#prTitle').value.trim();p.subtitle=$('#prSubtitle').value.trim();p.cta=$('#prCta').value.trim()||'Order now';p.active=$('#prActive').value==='yes';p.start=$('#prStart').value;p.end=$('#prEnd').value;p.image=im.dataset.url||p.image||WD_IMAGES.promoFallback;if(!p.title||!p.subtitle)throw Error();await save('promos',p);renderAll();toast('Promo saved.');closeDrawer()}catch{toast('Add a promo title and message before saving.')}finally{busy(e.currentTarget,false)}};if($('#deletePromo'))$('#deletePromo').onclick=async e=>{if(!confirm('Remove this promo?'))return;busy(e.currentTarget,true,'Removing');await del('promos',p.id);renderAll();closeDrawer();toast('Promo removed.')}}$('#addPromo').onclick=()=>promoDrawer(null,true);
 function slides(){const a=rows('wdSlides');$('#slideList').innerHTML=a.map(s=>`<article class="admin-card" data-slide="${s.id}"><div class="admin-card-media"><img src="${esc(s.image)}"><span class="badge ${s.active!==false?'on':'off'}">${s.active!==false?'ACTIVE':'PAUSED'}</span></div><div class="admin-card-copy"><small>${esc(s.kicker)}</small><h3>${esc(s.title)}</h3><p>${esc(s.copy||'')}</p><div class="admin-card-foot"><span>${esc(s.cta||'')}</span><span class="small-btn">Edit slide</span></div></div></article>`).join('');$$('[data-slide]').forEach(b=>b.onclick=()=>slideDrawer(b.dataset.slide))}function slideDrawer(id,newItem=false){const s=newItem?{id:uid('slide'),admin:true,kicker:'',title:'',copy:'',image:'',cta:'Order now',href:'menu.html',active:true}:JSON.parse(JSON.stringify(rows('wdSlides').find(x=>x.id===id)));openDrawer(newItem?'Add homepage slide':s.title,'HOMEPAGE SLIDE',`<div class="drawer-section">${uploadBox('slideImage',s.image)}${!newItem?'<button type="button" class="reset-image-btn" id="resetSlideImage" style="margin-top:9px">Use original image</button>':''}<div class="drawer-grid" style="margin-top:12px"><div class="field"><label>Small label</label><input id="slKicker" value="${esc(s.kicker||'')}"></div><div class="field"><label>Button text</label><input id="slCta" value="${esc(s.cta||'')}"></div></div><div class="field"><label>Main headline</label><input id="slTitle" value="${esc(s.title||'')}"></div><div class="field"><label>Supporting text</label><textarea id="slCopy">${esc(s.copy||'')}</textarea></div><div class="drawer-grid"><div class="field"><label>Button link</label><input id="slHref" value="${esc(s.href||'menu.html')}"></div><div class="field"><label>Show on homepage</label><select id="slActive"><option value="yes" ${s.active!==false?'selected':''}>Yes</option><option value="no" ${s.active===false?'selected':''}>No, pause it</option></select></div></div></div><div class="drawer-actions"><button class="primary" id="saveSlide">${newItem?'Add slide':'Save slide'}</button>${newItem?'':`<button class="small-btn danger" id="deleteSlide">Remove slide</button>`}</div>`);const im=$('#slideImage');im.onclick=()=>chooseImage(im,'hero');if($('#resetSlideImage'))$('#resetSlideImage').onclick=()=>{const o=WD_DEFAULT_SLIDES.find(x=>String(x.id)===String(s.id));if(!o)return toast('This slide was created in the admin, so it has no original image.');im.dataset.url=o.image;im.innerHTML=`<img src="${esc(o.image)}" alt="Original slide image"><div class="upload-copy"><b>Original image restored</b></div>`};$('#saveSlide').onclick=async e=>{busy(e.currentTarget,true);try{s.kicker=$('#slKicker').value.trim();s.title=$('#slTitle').value.trim();s.copy=$('#slCopy').value.trim();s.cta=$('#slCta').value.trim();s.href=$('#slHref').value.trim()||'menu.html';s.active=$('#slActive').value==='yes';s.image=im.dataset.url||s.image;if(!s.title||!s.image)throw Error();await save('slides',s);renderAll();closeDrawer();toast('Homepage slide saved.')}catch{toast('Add a headline and image before saving.')}finally{busy(e.currentTarget,false)}};if($('#deleteSlide'))$('#deleteSlide').onclick=async e=>{if(!confirm('Remove this homepage slide?'))return;busy(e.currentTarget,true,'Removing');await del('slides',s.id);renderAll();closeDrawer();toast('Slide removed.')}}$('#addSlide').onclick=()=>slideDrawer(null,true);
 function reviews(){const a=rows('wdReviews');$('#reviewList').innerHTML=a.length?a.map(r=>`<div class="list-row" data-review="${r.id}"><div><h4>${esc(r.name)} · ${'★'.repeat(Number(r.stars||0))}</h4><small>${esc(r.location||'Location not added')}</small></div><div><span class="badge ${r.approved?'on':'warn'}">${r.approved?'PUBLIC':'WAITING'}</span></div><div><small>${esc(String(r.text||'').slice(0,80))}${String(r.text||'').length>80?'…':''}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No reviews yet.</p>';$$('[data-review]').forEach(b=>b.onclick=()=>reviewDrawer(b.dataset.review))}function reviewDrawer(id){const r=rows('wdReviews').find(x=>x.id===id);openDrawer(`${r.name}'s review`,'CUSTOMER REVIEW',`<div class="drawer-section"><p style="color:#c28c00;font-size:20px">${'★'.repeat(Number(r.stars||0))}</p><h3>${esc(r.text)}</h3><p>${esc(r.name)} · ${esc(r.location||'')}</p><small>${esc(r.email||'Email not provided')}</small></div><div class="drawer-actions"><button class="primary" id="toggleReview">${r.approved?'Hide from website':'Approve and publish'}</button><button class="small-btn danger" id="deleteReview">Delete review</button></div>`);$('#toggleReview').onclick=async e=>{busy(e.currentTarget,true);r.approved=!r.approved;await save('reviews',r);renderAll();closeDrawer();toast(r.approved?'Review published.':'Review hidden.')} ;$('#deleteReview').onclick=async e=>{if(!confirm('Delete this review?'))return;busy(e.currentTarget,true,'Deleting');await del('reviews',r.id);renderAll();closeDrawer();toast('Review deleted.')}}
