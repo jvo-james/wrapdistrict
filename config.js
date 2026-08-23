@@ -29,7 +29,7 @@ window.WD_CONFIG = {
     }
   },
 
-  paystackPublicKey: 'YOUR_PAYSTACK_PUBLIC_KEY',
+  paystackPublicKey: 'pk_test_297586e51710e83d3c159bfe71ff45c7e23411fa',
   secureOrderEndpoint: '/.netlify/functions/verify-payment',
   businessEmail: 'orders@wrapdistrict.com',
   whatsapp: '233000000000',
