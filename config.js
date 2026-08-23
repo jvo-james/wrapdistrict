@@ -24,8 +24,8 @@ window.WD_CONFIG = {
     publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
     serviceId: 'service_n2gaahd',
     templates: {
-      customer: 'YOUR_CUSTOMER_TEMPLATE_ID',
-      admin: 'YOUR_ADMIN_TEMPLATE_ID'
+      customer: 'template_z5l8xns',
+      admin: 'template_or8qh4d'
     }
   },
 
