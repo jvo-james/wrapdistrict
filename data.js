@@ -11,7 +11,7 @@ window.WD_PRODUCTS = [
 
 window.WD_DEFAULT_DRINKS=[
 {id:'drink-coke',name:'Coca Cola',category:'Drink',from:10,tagline:'Classic, cold and fizzy.',description:'A chilled Coca Cola to go with your meal.',image:'images/coke.jpg',sizeImages:['images/coke.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
-{id:'drink-fanta',name:'Fanta',category:'Drink',from:10,tagline:'Bright orange refreshment.',description:'A chilled Fanta to go with your meal.',image:'images/fanta.jpg',sizeImages:['images/fanta.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
+{id:'drink-fanta',name:'Fanta',category:'Drink',from:10,tagline:'Bright orange refreshment.',description:'A chilled Fanta to go with your meal.',image:'images/fanta.png',sizeImages:['images/fanta.png'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
 {id:'drink-sprite',name:'Sprite',category:'Drink',from:10,tagline:'Clean lemon-lime refreshment.',description:'A chilled Sprite to go with your meal.',image:'images/sprite.jpg',sizeImages:['images/sprite.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
 {id:'drink-water',name:'Water',category:'Drink',from:5,tagline:'Simple, cold and refreshing.',description:'A chilled bottle of water to go with your meal.',image:'images/water.jpg',sizeImages:['images/water.jpg'],sizes:[['Bottle',5]],extras:[],available:true,isDrink:true,hiddenFromMenu:true}
 ];
