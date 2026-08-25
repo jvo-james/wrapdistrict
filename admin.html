@@ -37,6 +37,7 @@
 <button data-view="sales" data-sub="analyticsPane"><i class="fa-solid fa-chart-line"></i><span>Sales analytics</span></button>
 <button data-view="sales" data-sub="donationsPane"><i class="fa-solid fa-heart"></i><span>Donations</span></button>
 <button data-view="store" data-sub="productsPane"><i class="fa-solid fa-burger"></i><span>Menu products</span><b class="nav-count soft" id="productsNavCount" hidden>0</b></button>
+<button data-view="store" data-sub="drinksPane"><i class="fa-solid fa-bottle-water"></i><span>Drinks</span></button>
 <button data-view="store" data-sub="promosPane"><i class="fa-solid fa-bolt"></i><span>Promotions</span></button>
 <button data-view="content" data-sub="slidesPane"><i class="fa-solid fa-display"></i><span>Homepage</span></button>
 <button data-view="content" data-sub="galleryPane"><i class="fa-solid fa-images"></i><span>Feed gallery</span></button>
@@ -52,6 +53,8 @@
 </nav>
     <div class="side-bottom">
       <strong id="adminName">Wrap District Admin</strong>
+      <span class="sync-pill side-sync" id="syncState"><i class="fa-solid fa-cloud"></i> Ready</span>
+      <button class="store-toggle side-store-toggle" id="storeToggle"></button>
       <a href="index.html" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open website</a>
       <button id="adminLogout"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
     </div>
@@ -59,9 +62,8 @@
 
   <main class="admin-main">
     <header class="admin-top">
-      <div class="admin-top-title"><button class="icon-square" id="adminMenu" aria-label="Open menu"><i class="fa-solid fa-bars-staggered"></i></button><h1 id="viewTitle">Overview</h1></div>
+      <div class="admin-top-title"><button class="icon-square mobile-only-menu" id="adminMenu" aria-label="Open menu"><i class="fa-solid fa-bars-staggered"></i></button><h1 id="viewTitle">Overview</h1></div>
       <div class="admin-top-actions">
-        <span class="sync-pill" id="syncState"><i class="fa-solid fa-cloud"></i> Ready</span>
         <div class="notification-menu" id="notificationMenu">
           <button class="icon-square notification-button" id="notificationButton" aria-label="Notifications" aria-expanded="false"><i class="fa-regular fa-bell"></i><b id="notificationCount" hidden>0</b></button>
           <div class="notification-popover" id="notificationPopover" aria-hidden="true">
@@ -72,8 +74,6 @@
           </div>
         </div>
         <a class="icon-square" href="index.html" target="_blank" aria-label="Open website"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-        <div class="admin-profile" id="profileEmail">Admin</div>
-        <button class="store-toggle" id="storeToggle"></button>
       </div>
     </header>
 
@@ -107,8 +107,8 @@
 
       <div class="admin-view" id="store">
         <div class="page-intro"><div><span>Store control</span><h2>Menu, inventory & promos.</h2><p>Edit what customers can order and what the team needs to restock.</p></div></div>
-        <div class="admin-tabs"><button class="active" data-subtab="productsPane">Menu items</button><button data-subtab="inventoryPane">Inventory</button><button data-subtab="promosPane">Promos</button></div>
-        <section class="admin-subview active" id="productsPane"><div class="section-actions"><button class="primary" id="addProduct"><i class="fa-solid fa-plus"></i> Add menu item</button></div><div class="product-admin-grid" id="productList"></div></section>
+        <div class="admin-tabs"><button class="active" data-subtab="productsPane">Menu items</button><button data-subtab="drinksPane">Drinks</button><button data-subtab="inventoryPane">Inventory</button><button data-subtab="promosPane">Promos</button></div>
+        <section class="admin-subview active" id="productsPane"><div class="section-actions"><button class="primary" id="addProduct"><i class="fa-solid fa-plus"></i> Add menu item</button></div><div class="product-admin-grid" id="productList"></div></section><section class="admin-subview" id="drinksPane"><div class="admin-panel drinks-control-panel"><div class="panel-head"><div><span>ORDER ADD-ONS</span><h3>Drink availability</h3></div></div><p class="muted-copy">These drinks only appear inside food builders. Turn a drink off and it disappears from every food page.</p><div class="drink-admin-grid" id="drinkList"></div></div></section>
         <section class="admin-subview" id="inventoryPane"><div class="section-actions"><button class="primary" id="addInventory"><i class="fa-solid fa-plus"></i> Add stock item</button></div><div class="inventory-summary" id="inventorySummary"></div><div class="admin-panel"><div class="responsive-list" id="inventoryList"></div></div></section>
         <section class="admin-subview" id="promosPane"><div class="section-actions"><button class="primary" id="addPromo"><i class="fa-solid fa-plus"></i> New promo</button></div><div class="admin-panel"><div class="responsive-list" id="promoList"></div></div></section>
       </div>
@@ -118,7 +118,7 @@
         <div class="admin-tabs"><button class="active" data-subtab="slidesPane">Homepage slides</button><button data-subtab="galleryPane">Feed gallery</button><button data-subtab="teamPane">Team</button></div>
         <section class="admin-subview active" id="slidesPane"><div class="section-actions"><button class="primary" id="addSlide"><i class="fa-solid fa-plus"></i> Add slide</button></div><div class="slide-admin-grid" id="slideList"></div></section>
         <section class="admin-subview" id="galleryPane"><div class="section-actions"><button class="primary" id="addGallery"><i class="fa-solid fa-cloud-arrow-up"></i> Add photos</button></div><div class="gallery-note"><i class="fa-solid fa-grip"></i><span>Move photos earlier or later. The same order appears on the public Feed the Street gallery.</span></div><div class="admin-gallery" id="adminGallery"></div></section>
-        <section class="admin-subview" id="teamPane"><div class="team-sync-note"><i class="fa-solid fa-users"></i><div><strong>The same eight team profiles used on the public Team page are shown here.</strong><span>Every profile is editable, including name, bio, image and social links.</span></div></div><div class="team-admin-grid" id="teamList"></div></section>
+        <section class="admin-subview" id="teamPane"><div class="section-actions"><button class="primary" id="addTeamMember"><i class="fa-solid fa-user-plus"></i> Add team member</button></div><div class="team-sync-note"><i class="fa-solid fa-users"></i><div><strong>The founder stays permanently at position 1.</strong><span>Add or remove other members and choose the order in which they appear on the public Team page.</span></div></div><div class="team-admin-grid" id="teamList"></div></section>
       </div>
 
       <div class="admin-view" id="community">
@@ -126,7 +126,7 @@
         <div class="admin-tabs"><button class="active" data-subtab="reviewsPane">Reviews</button><button data-subtab="customersPane">Customers</button><button data-subtab="subscribersPane">Subscribers</button></div>
         <section class="admin-subview active" id="reviewsPane"><div class="admin-panel"><div class="responsive-list" id="reviewList"></div></div></section>
         <section class="admin-subview" id="customersPane"><div class="admin-panel"><div class="toolbar"><input id="customerSearch" placeholder="Search customer, email or phone"></div><div class="responsive-list" id="customerList"></div></div></section>
-        <section class="admin-subview" id="subscribersPane"><div class="section-actions"><button class="secondary" id="exportSubscribers"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button></div><div class="metric-grid subscriber-metrics"><div class="metric-card"><i class="fa-solid fa-users"></i><span>Total subscribers</span><b id="subTotal">0</b><small>Saved signups</small></div><div class="metric-card"><i class="fa-solid fa-user-plus"></i><span>Joined this month</span><b id="subMonth">0</b><small>New this month</small></div></div><div class="admin-panel"><div class="toolbar"><input id="subscriberSearch" placeholder="Search email address"></div><div class="responsive-list" id="subscribersFullList"></div></div></section>
+        <section class="admin-subview" id="subscribersPane"><div class="section-actions"><button class="secondary" id="exportSubscribers"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button></div><div class="subscriber-composer admin-panel"><div class="panel-head"><div><span>EMAIL EVERYONE</span><h3>Send a subscriber update</h3></div></div><div class="subscriber-compose-grid"><div class="field"><label>Subject</label><input id="subscriberEmailSubject" maxlength="120" placeholder="What is this update about?"></div><div class="field subscriber-body-field"><label>Message</label><textarea id="subscriberEmailBody" rows="7" placeholder="Write the email you want every subscriber to receive..."></textarea></div><div class="subscriber-send-row"><small id="subscriberSendHint">Each subscriber receives their own copy.</small><button class="primary" id="sendSubscriberEmail"><i class="fa-solid fa-paper-plane"></i> Send to all subscribers</button></div><div class="subscriber-send-progress" id="subscriberSendProgress" hidden></div></div></div><div class="metric-grid subscriber-metrics"><div class="metric-card"><i class="fa-solid fa-users"></i><span>Total subscribers</span><b id="subTotal">0</b><small>Saved signups</small></div><div class="metric-card"><i class="fa-solid fa-user-plus"></i><span>Joined this month</span><b id="subMonth">0</b><small>New this month</small></div></div><div class="admin-panel"><div class="toolbar"><input id="subscriberSearch" placeholder="Search email address"></div><div class="responsive-list" id="subscribersFullList"></div></div></section>
       </div>
 
       <div class="admin-view" id="inbox">
@@ -151,6 +151,6 @@
 <aside class="admin-drawer" id="adminDrawer"><div class="drawer-head"><div><span id="drawerKicker">DETAILS</span><h2 id="drawerTitle">Details</h2></div><button class="icon-square" id="drawerClose"><i class="fa-solid fa-xmark"></i></button></div><div class="drawer-body" id="drawerBody"></div></aside>
 <div class="admin-toast" id="adminToast"></div>
 <input type="file" id="hiddenImageInput" accept="image/*" hidden>
-<script src="images.js"></script><script src="config.js"></script><script src="firebase.js"></script><script src="cloudinary.js"></script><script src="data.js"></script><script src="admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script><script src="images.js"></script><script src="config.js"></script><script src="firebase.js"></script><script src="cloudinary.js"></script><script src="data.js"></script><script src="admin.js"></script>
 </body>
 </html>

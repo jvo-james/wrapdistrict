@@ -1,0 +1,5 @@
+Put this FIRST in the Subject field for template_z5l8xns:
+
+{{#broadcast_subject}}{{broadcast_subject}}{{/broadcast_subject}}
+
+Then keep your existing conditional subjects after it.

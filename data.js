@@ -8,16 +8,24 @@ window.WD_PRODUCTS = [
 {id:'salad',name:'District Salad',category:'Salad',from:40,tagline:'Fresh, full and definitely not a side.',description:'A proper salad loaded with chicken, sausages, tuna flakes, baked beans and extra sauces. Pick the portion that matches your appetite.',image:WD_IMAGES.productSalad,sizeImages:[WD_IMAGES.productSalad,'images/salad2.jpg','images/salad3.jpg'],sizes:[['Regular',40],['Big Bowl',50],['District Bowl',55]],extras:[],available:true,newProduct:true},
 {id:'burger',name:'District Burger',category:'Burger',from:50,tagline:'New to the District. Built to make noise.',description:'A big, juicy burger with layers that actually show up. Choose your size, stack on the extras and make it yours.',image:WD_IMAGES.productBurger,sizeImages:[WD_IMAGES.productBurger,WD_IMAGES.productBurger,WD_IMAGES.productBurger],sizes:[['Original',50],['Double District',60],['Big District',70]],extras:[['Extra Patty',18,'images/placeholder-food.svg'],['Cheese',10,WD_IMAGES.extraCheese],['Sausage',8,WD_IMAGES.extraSausage],['Extra Sauce',5,WD_IMAGES.extraSauce],['Fried Egg',6,WD_IMAGES.extraFriedEgg]],available:true,newProduct:true,featured:true}
 ];
+
+window.WD_DEFAULT_DRINKS=[
+{id:'drink-coke',name:'Coca Cola',category:'Drink',from:10,tagline:'Classic, cold and fizzy.',description:'A chilled Coca Cola to go with your meal.',image:'images/coke.jpg',sizeImages:['images/coke.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
+{id:'drink-fanta',name:'Fanta',category:'Drink',from:10,tagline:'Bright orange refreshment.',description:'A chilled Fanta to go with your meal.',image:'images/fanta.jpg',sizeImages:['images/fanta.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
+{id:'drink-sprite',name:'Sprite',category:'Drink',from:10,tagline:'Clean lemon-lime refreshment.',description:'A chilled Sprite to go with your meal.',image:'images/sprite.jpg',sizeImages:['images/sprite.jpg'],sizes:[['Bottle',10]],extras:[],available:true,isDrink:true,hiddenFromMenu:true},
+{id:'drink-water',name:'Water',category:'Drink',from:5,tagline:'Simple, cold and refreshing.',description:'A chilled bottle of water to go with your meal.',image:'images/water.jpg',sizeImages:['images/water.jpg'],sizes:[['Bottle',5]],extras:[],available:true,isDrink:true,hiddenFromMenu:true}
+];
+window.WD_PRODUCTS=[...window.WD_PRODUCTS,...window.WD_DEFAULT_DRINKS];
 window.WD_MENU_ORDER=['shawarma','loaded-fries','loaded-angwamo','fried-rice','loaded-jollof','noodles','salad','burger'];
 window.WD_DEFAULT_TEAM=[
-{id:'t1',name:'Kenneth Kankam',role:'Founder',image:WD_IMAGES.teamFounder,bio:'Kenneth founded Wrap District and leads the food from idea to final plate. He develops the menu, protects the standard and keeps the District moving with purpose.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t6',name:'Cynara',role:'Team',image:WD_IMAGES.teamCynara,bio:'Cynara brings a thoughtful eye, fresh ideas and calm energy to the people behind the District.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t4',name:'James',role:'Web Developer',image:WD_IMAGES.teamJames,bio:'James built and develops the Wrap District website, shaping the digital experience customers use to discover the menu, order, pay and stay connected to the brand.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t2',name:'Sheila',role:'Team',image:WD_IMAGES.teamSheila,bio:'Sheila brings energy, ideas and a steady presence to the team as the District keeps growing.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t3',name:'Nafred',role:'Team',image:WD_IMAGES.teamNafred,bio:'Nafred helps shape the spirit of Wrap District with perspective, support and good energy.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t5',name:'Etornam',role:'Team',image:WD_IMAGES.teamEtornam,bio:'Etornam brings ideas, personality and a thoughtful point of view to the team.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t7',name:'Elizabeth',role:'Team',image:WD_IMAGES.teamElizabeth,bio:'Elizabeth brings care, support and consistency to the work that keeps the District moving.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
-{id:'t8',name:'Rigobert',role:'Team',image:WD_IMAGES.teamRigobert,bio:'Rigobert brings creativity, presence and a strong sense of how the District should be seen and remembered.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''}
+{id:'t1',name:'Kenneth Kankam',role:'Founder',position:1,lockedFounder:true,image:WD_IMAGES.teamFounder,bio:'Kenneth founded Wrap District and leads the food from idea to final plate. He develops the menu, protects the standard and keeps the District moving with purpose.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t6',position:2,name:'Cynara',role:'Team',image:WD_IMAGES.teamCynara,bio:'Cynara brings a thoughtful eye, fresh ideas and calm energy to the people behind the District.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t4',position:3,name:'James',role:'Web Developer',image:WD_IMAGES.teamJames,bio:'James built and develops the Wrap District website, shaping the digital experience customers use to discover the menu, order, pay and stay connected to the brand.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t2',position:4,name:'Sheila',role:'Team',image:WD_IMAGES.teamSheila,bio:'Sheila brings energy, ideas and a steady presence to the team as the District keeps growing.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t3',position:5,name:'Nafred',role:'Team',image:WD_IMAGES.teamNafred,bio:'Nafred helps shape the spirit of Wrap District with perspective, support and good energy.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t5',position:6,name:'Etornam',role:'Team',image:WD_IMAGES.teamEtornam,bio:'Etornam brings ideas, personality and a thoughtful point of view to the team.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t7',position:7,name:'Elizabeth',role:'Team',image:WD_IMAGES.teamElizabeth,bio:'Elizabeth brings care, support and consistency to the work that keeps the District moving.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''},
+{id:'t8',position:8,name:'Rigobert',role:'Team',image:WD_IMAGES.teamRigobert,bio:'Rigobert brings creativity, presence and a strong sense of how the District should be seen and remembered.',instagram:'#',tiktok:'#',snapchat:'',x:'',facebook:''}
 ];
 window.WD_DEFAULT_REVIEWS=[];
 window.WD_DEFAULT_PROMOS=[];
