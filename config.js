@@ -31,7 +31,7 @@ window.WD_CONFIG = {
 
   paystackPublicKey: 'pk_test_9cabddea8f1b6ae61aeadb2ce92ed18eac712380',
   secureOrderEndpoint: '/.netlify/functions/verify-payment',
-  businessEmail: 'orders@wrapdistrict.com',
+  businessEmail: 'kennethkankam22@gmail.com',
   whatsapp: '233000000000',
   social: {
     instagram: '#',
