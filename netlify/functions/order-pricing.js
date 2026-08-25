@@ -6,7 +6,11 @@ const BASE={
 'loaded-jollof':{name:'Loaded Jollof',sizes:{'Loaded Jollof':85},extras:{'Chicken':15,'Egg':6}},
 'noodles':{name:'Noodles',sizes:{'Noodles':50},extras:{'Chicken':15,'Sausage':8,'Egg':6}},
 'salad':{name:'District Salad',sizes:{'Regular':40,'Big Bowl':50,'District Bowl':55},extras:{}},
-'burger':{name:'District Burger',sizes:{'Original':50,'Double District':60,'Big District':70},extras:{'Extra Patty':18,'Cheese':10,'Sausage':8,'Extra Sauce':5,'Fried Egg':6}}
+'burger':{name:'District Burger',sizes:{'Original':50,'Double District':60,'Big District':70},extras:{'Extra Patty':18,'Cheese':10,'Sausage':8,'Extra Sauce':5,'Fried Egg':6}},
+'drink-coke':{name:'Coca Cola',sizes:{'Bottle':10},extras:{}},
+'drink-fanta':{name:'Fanta',sizes:{'Bottle':10},extras:{}},
+'drink-sprite':{name:'Sprite',sizes:{'Bottle':10},extras:{}},
+'drink-water':{name:'Water',sizes:{'Bottle':5},extras:{}}
 };
 const arr=v=>Array.isArray(v)?v:[];function normaliseProduct(raw,id){if(!raw)return BASE[id];const sizes={};arr(raw.sizes).forEach(x=>{const n=Array.isArray(x)?x[0]:x?.name,p=Number(Array.isArray(x)?x[1]:x?.price);if(n&&Number.isFinite(p))sizes[n]=p});const extras={};arr(raw.extras).forEach(x=>{const n=Array.isArray(x)?x[0]:x?.name,p=Number(Array.isArray(x)?x[1]:x?.price);if(n&&Number.isFinite(p))extras[n]=p});return{name:raw.name||BASE[id]?.name||id,available:raw.available!==false,sizes:Object.keys(sizes).length?sizes:BASE[id]?.sizes||{},extras:Object.keys(extras).length?extras:BASE[id]?.extras||{}}}
 function activePromo(promos,id){const d=new Date().toISOString().slice(0,10);return promos.find(p=>p.active!==false&&p.kind==='product'&&p.productId===id&&(!p.start||p.start<=d)&&(!p.end||p.end>=d))||null}
