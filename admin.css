@@ -115,3 +115,6 @@
   .subscriber-send-row{align-items:stretch;flex-direction:column}.subscriber-send-row .primary{width:100%}
 }
 @media(max-width:560px){.drink-admin-card{grid-template-columns:54px 1fr}.drink-admin-card img{width:54px;height:54px}.availability-switch{grid-column:1/-1;justify-content:center}.fulfilment-summary{grid-template-columns:1fr}}
+
+/* Sidebar cleanup: status/account controls removed; close control is mobile-only. */
+@media (min-width:821px){.admin-side .side-close{display:none!important}}
