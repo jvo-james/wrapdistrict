@@ -61,8 +61,13 @@ exports.handler=async event=>{
     initAdmin();
     const db=admin.firestore();
     const body=JSON.parse(event.body||'{}');
-    const order=body.order||{};
-    const reference=String(body.reference||order.paystackReference||order.reference||'').trim();
+    const supplied=body.order||{};
+    const orderId=String(body.orderId||supplied.id||'').trim();
+    if(!orderId)return{statusCode:400,body:JSON.stringify({ok:false,error:'Missing order ID.'})};
+    const snap=await db.collection('orders').doc(orderId).get();
+    if(!snap.exists)return{statusCode:404,body:JSON.stringify({ok:false,error:'Order not found.'})};
+    const order={id:orderId,...snap.data()};
+    const reference=String(body.reference||'').trim();
     if(!reference)return{statusCode:400,body:JSON.stringify({ok:false,error:'Missing payment reference.'})};
     const payment=await verifyPaystack(reference);
     if(payment.status!=='success')return{statusCode:400,body:JSON.stringify({ok:false,error:'Payment is not successful.'})};
