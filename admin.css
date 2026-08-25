@@ -457,3 +457,7 @@
   .page-intro{display:block}
   .page-intro>.badge{margin-top:10px}
 }
+
+
+/* Promo details inside order drawer */
+.order-detail-promo th,.order-detail-promo td{background:#fff4ef}.order-detail-promo td{color:#c93824;font-weight:850}.admin-free-pill{display:inline-flex;margin-left:8px;background:#269b63;color:#fff;border-radius:999px;padding:4px 7px;font-size:8px;letter-spacing:.08em}.upload-box#promoImage{margin:14px 0}
