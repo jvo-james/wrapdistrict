@@ -29,7 +29,7 @@ window.WD_CONFIG = {
     }
   },
 
-  paystackPublicKey: 'pk_test_9cabddea8f1b6ae61aeadb2ce92ed18eac712380',
+  paystackPublicKey: 'pk_live_ad7d0e0b164d83ec61bf2bf4fdb2af366c41c0ed',
   secureOrderEndpoint: '/.netlify/functions/verify-payment',
   businessEmail: 'kennethkankam22@gmail.com',
   whatsapp: '233000000000',
