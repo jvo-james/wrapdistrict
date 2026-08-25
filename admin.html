@@ -29,15 +29,27 @@
       <button class="icon-square side-close" id="adminSideClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <nav class="admin-nav" id="adminNav">
-      <button class="active" data-view="overview"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></button>
-      <button data-view="orders"><i class="fa-solid fa-bag-shopping"></i><span>Orders</span><b class="nav-count" id="ordersNavCount" hidden>0</b></button>
-      <button data-view="sales"><i class="fa-solid fa-chart-line"></i><span>Sales</span></button>
-      <button data-view="store"><i class="fa-solid fa-burger"></i><span>Store</span><b class="nav-count soft" id="productsNavCount" hidden>0</b></button>
-      <button data-view="content"><i class="fa-solid fa-images"></i><span>Content</span></button>
-      <button data-view="community"><i class="fa-solid fa-users"></i><span>Community</span><b class="nav-count" id="reviewsNavCount" hidden>0</b></button>
-      <button data-view="inbox"><i class="fa-solid fa-inbox"></i><span>Inbox</span><b class="nav-count" id="messagesNavCount" hidden>0</b></button>
-      <button data-view="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
-    </nav>
+<button class="active" data-view="overview"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></button>
+<button data-view="orders" data-sub="paidOrders"><i class="fa-solid fa-bag-shopping"></i><span>Paid orders</span><b class="nav-count" id="ordersNavCount" hidden>0</b></button>
+<button data-view="orders" data-sub="pendingOrders"><i class="fa-solid fa-clock"></i><span>Pending payments</span></button>
+<button data-view="orders" data-sub="abandonedOrders"><i class="fa-solid fa-cart-arrow-down"></i><span>Abandoned carts</span></button>
+<button data-view="orders" data-sub="transactions"><i class="fa-solid fa-credit-card"></i><span>Transactions</span></button>
+<button data-view="sales" data-sub="analyticsPane"><i class="fa-solid fa-chart-line"></i><span>Sales analytics</span></button>
+<button data-view="sales" data-sub="donationsPane"><i class="fa-solid fa-heart"></i><span>Donations</span></button>
+<button data-view="store" data-sub="productsPane"><i class="fa-solid fa-burger"></i><span>Menu products</span><b class="nav-count soft" id="productsNavCount" hidden>0</b></button>
+<button data-view="store" data-sub="promosPane"><i class="fa-solid fa-bolt"></i><span>Promotions</span></button>
+<button data-view="content" data-sub="slidesPane"><i class="fa-solid fa-display"></i><span>Homepage</span></button>
+<button data-view="content" data-sub="galleryPane"><i class="fa-solid fa-images"></i><span>Feed gallery</span></button>
+<button data-view="content" data-sub="teamPane"><i class="fa-solid fa-people-group"></i><span>Team</span></button>
+<button data-view="community" data-sub="reviewsPane"><i class="fa-solid fa-star"></i><span>Reviews</span><b class="nav-count" id="reviewsNavCount" hidden>0</b></button>
+<button data-view="community" data-sub="customersPane"><i class="fa-solid fa-user-group"></i><span>Customers</span></button>
+<button data-view="community" data-sub="subscribersPane"><i class="fa-solid fa-envelope-open"></i><span>Subscribers</span></button>
+<button data-view="inbox" data-sub="messagesPane"><i class="fa-solid fa-inbox"></i><span>Messages</span><b class="nav-count" id="messagesNavCount" hidden>0</b></button>
+<button data-view="inbox" data-sub="notificationsPane"><i class="fa-regular fa-bell"></i><span>Notifications</span></button>
+<button data-view="inbox" data-sub="activityPane"><i class="fa-solid fa-clock-rotate-left"></i><span>Activity</span></button>
+<button data-view="settings" data-sub="websiteSettingsPane"><i class="fa-solid fa-globe"></i><span>Website settings</span></button>
+<button data-view="settings" data-sub="accountSettingsPane"><i class="fa-solid fa-shield-halved"></i><span>Account & security</span></button>
+</nav>
     <div class="side-bottom">
       <strong id="adminName">Wrap District Admin</strong>
       <a href="index.html" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open website</a>
@@ -80,7 +92,7 @@
       <div class="admin-view" id="orders">
         <div class="page-intro"><div><span>Order desk</span><h2>Orders & payments.</h2><p>Paid orders, pending payments, abandoned carts and transaction references live together here.</p></div></div>
         <div class="admin-tabs"><button class="active" data-subtab="paidOrders">Paid orders</button><button data-subtab="pendingOrders">Pending payments</button><button data-subtab="abandonedOrders">Abandoned carts</button><button data-subtab="transactions">Transactions</button></div>
-        <section class="admin-subview active" id="paidOrders"><div class="toolbar"><input id="orderSearch" placeholder="Search order, customer or phone"><select id="orderFilter"><option value="all">All statuses</option><option>New</option><option>Preparing</option><option>Ready</option><option>Out for delivery</option><option>Completed</option></select></div><div class="admin-panel"><div class="responsive-list" id="ordersList"></div></div></section>
+        <section class="admin-subview active" id="paidOrders"><div class="order-batch-bar"><label><input type="checkbox" id="selectAllOrders"> Select all shown</label><span id="selectedOrdersCount">0 selected</span><button class="secondary" id="printSelectedOrders"><i class="fa-solid fa-print"></i> Print selected</button></div><div class="toolbar"><input id="orderSearch" placeholder="Search order, customer or phone"><select id="orderFilter"><option value="all">All statuses</option><option>New</option><option>Preparing</option><option>Ready</option><option>Out for delivery</option><option>Completed</option></select></div><div class="admin-panel"><div class="responsive-list" id="ordersList"></div></div></section>
         <section class="admin-subview" id="pendingOrders"><div class="admin-panel"><div class="panel-head"><div><span>PAYMENT QUEUE</span><h3>Pending payments</h3></div></div><div class="responsive-list" id="pendingPaymentsList"></div></div></section>
         <section class="admin-subview" id="abandonedOrders"><div class="admin-panel"><div class="panel-head"><div><span>RECOVERY</span><h3>Abandoned carts</h3></div></div><div class="responsive-list" id="abandonedList"></div></div></section>
         <section class="admin-subview" id="transactions"><div class="admin-panel"><div class="panel-head"><div><span>PAYSTACK</span><h3>Transactions</h3></div></div><div class="responsive-list" id="transactionList"></div></div></section>

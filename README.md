@@ -260,3 +260,9 @@ http://localhost:8080/admin.html
 - Test purchase, donation, contact, feedback and subscription emails.
 - Replace any placeholder social links/details.
 - Add the Netlify environment variables listed in `PUBLISH_CHECKLIST.md` and register the live webhook URL before taking real money.
+
+
+## Production checkout security
+Checkout totals and chronological order IDs are created server-side by `/.netlify/functions/prepare-order`. Successful Paystack payments are independently verified before an order is marked paid. Configure these Netlify environment variables: `PAYSTACK_SECRET_KEY`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY`. Never place the Paystack secret key in browser code.
+
+Customer-facing EmailJS messages use the customer template for purchases, subscriptions, contact messages, feedback/reviews and donations. The admin EmailJS template is used only for purchases and donations; the admin dashboard receives other website activity from Firestore.

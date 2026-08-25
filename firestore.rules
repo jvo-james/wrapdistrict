@@ -13,9 +13,9 @@ service cloud.firestore {
     match /teamMembers/{id} { allow read: if true; allow write: if isAdmin(); }
     match /siteContent/{id} { allow read: if true; allow write: if isAdmin(); }
     match /reviews/{id} { allow read: if isAdmin() || resource.data.approved == true; allow create: if request.resource.data.approved == false; allow update, delete: if isAdmin(); }
-    match /orders/{id} { allow create: if request.resource.data.payment == 'Pending' || request.resource.data.paymentStatus == 'Pending'; allow read, update, delete: if isAdmin(); }
+    match /orders/{id} { allow read, update, delete: if isAdmin(); allow create: if false; }
     match /abandonedCarts/{id} { allow create, update: if true; allow read, delete: if isAdmin(); }
-    match /donations/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }
+    match /donations/{id} { allow read, update, delete: if isAdmin(); allow create: if false; }
     match /contacts/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }
     match /subscribers/{id} { allow create: if true; allow read, update, delete: if isAdmin(); }
     match /notifications/{id} { allow create: if allowedPublicNotification(); allow read, update, delete: if isAdmin(); }

@@ -72,14 +72,13 @@
   }
 
   function memberCard(person, index) {
-    const number = String(index + 2).padStart(2, '0');
     return `
       <button class="team-person-v3 team-person-v3-${index + 1}" type="button" data-person-id="${esc(person.id)}" aria-label="Open ${esc(person.name)}'s profile">
         <span class="team-person-image-v3"><img src="${esc(person.image)}" alt="${esc(person.name)}"></span>
         <span class="team-person-shade-v3"></span>
-        <span class="team-person-number-v3">${number}</span>
+        
         <span class="team-person-name-v3">${esc(person.name)}</span>
-        <span class="team-person-open-v3">View profile <i class="fa-solid fa-arrow-right"></i></span>
+        <span class="team-person-role-v3">${esc(person.role||'Team')}</span>
       </button>`;
   }
 
@@ -110,7 +109,7 @@
             <span class="eyebrow">The people around the District</span>
             <h2 id="teamPeopleTitle">Meet the rest<br>of the team.</h2>
           </div>
-          <p>No titles on the cards. Just the people. Open a portrait when you want to know more.</p>
+          <p>A focused team bringing food, service, ideas and digital craft together. Open any profile to meet the people helping build the District.</p>
         </div>
         <div class="team-grid-v3">${others.map(memberCard).join('')}</div>
       </section>
@@ -133,13 +132,12 @@
     const content = document.querySelector('#teamDrawerContent');
     if (!drawer || !backdrop || !content) return;
 
-    const number = String(index + 1).padStart(2, '0');
     const isFounder = index === 0;
 
     content.innerHTML = `
       <div class="team-drawer-portrait-v3">
         <img src="${esc(person.image)}" alt="${esc(person.name)}">
-        <span class="team-drawer-count-v3">Profile ${number}</span>
+        
         <span class="team-drawer-word-v3">DISTRICT</span>
       </div>
       <div class="team-drawer-body-v3">
