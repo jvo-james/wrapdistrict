@@ -75,3 +75,216 @@
 /* Optional drink add-ons inside every food builder */
 .builder-step-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}.builder-step-heading h3{margin-bottom:5px}.builder-step-heading p{margin:0;color:#b9ada3;font-size:12px;line-height:1.5}.optional-chip{display:inline-block;vertical-align:middle;margin-left:7px;padding:4px 7px;border:1px solid #ffffff26;border-radius:999px;font:800 8px/1 'DM Sans',sans-serif;letter-spacing:.08em;color:var(--gold);text-transform:uppercase}.drink-clear{border:0;background:transparent;color:var(--gold);font-size:11px;font-weight:800;padding:6px;white-space:nowrap;cursor:pointer}.drink-choice-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.drink-choice{position:relative;border:1px solid #ffffff24;background:#ffffff08;color:#fff;border-radius:18px;padding:9px;min-width:0;overflow:hidden;transition:border-color .2s,background .2s,transform .2s}.drink-choice:hover{transform:translateY(-2px);border-color:#ffffff48}.drink-choice.active{border-color:var(--gold);background:#f8c84e12;box-shadow:0 0 0 2px #f8c84e22}.drink-select-area{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}.drink-choice-image{display:block;width:100%;height:132px;border-radius:13px;overflow:hidden;background:#221b17}.drink-choice-image img{width:100%;height:100%;object-fit:cover}.drink-choice-copy{display:block;min-width:0;padding:10px 2px 5px}.drink-choice-copy b{display:block;font-size:13px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drink-choice-copy small{display:block;margin-top:4px;color:#cfc3b8;font-size:11px}.drink-select-button{display:block;width:100%;margin-top:4px;padding:8px;border:1px solid #ffffff22;border-radius:10px;text-align:center;color:#f3e9df;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.drink-choice.active .drink-select-button{border-color:#f8c84e55;color:var(--gold);background:#f8c84e10}.drink-quantity{padding:10px 2px 2px;border-top:1px solid #ffffff16;margin-top:8px}.drink-quantity-label{display:block;margin-bottom:7px;color:#a99e94;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.drink-stepper{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:5px;background:#17120f;border-radius:11px;padding:4px}.drink-stepper button{width:34px;height:34px;border:0;border-radius:8px;background:#ffffff10;color:#fff;display:grid;place-items:center;cursor:pointer}.drink-stepper button:hover{background:#ffffff18}.drink-stepper strong{text-align:center;font-size:14px;color:#fff}.drink-check{position:absolute;right:15px;top:15px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#111;font-size:9px;opacity:0;transform:scale(.7);transition:.2s;pointer-events:none}.drink-choice.active .drink-check{opacity:1;transform:none}.selected-drink-summary{display:block;margin-top:4px}.selected-drink-summary small{color:#c8bbb0;font-size:10px;font-weight:500}
 @media(max-width:640px){.drink-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.drink-choice{padding:8px;border-radius:15px}.drink-choice-image{height:116px;border-radius:11px}.drink-choice-copy{padding-top:8px}.drink-choice-copy b{font-size:12px}.builder-step-heading{display:block}.drink-clear{padding-left:0;margin-top:5px}.drink-stepper{grid-template-columns:32px 1fr 32px}.drink-stepper button{width:32px;height:32px}.drink-check{right:12px;top:12px}}
+
+
+/* ==========================================================
+   AUG 2026 POLISH — ORDER BUILDER, CHECKOUT, TOASTS & FOOTER
+   ========================================================== */
+
+/* Keep confirmations useful without letting them cover the interface. */
+.toast{
+  right:16px;
+  bottom:16px;
+  max-width:min(320px,calc(100vw - 32px));
+  padding:9px 12px;
+  border-radius:9px;
+  font-size:12px;
+  line-height:1.35;
+  font-weight:700;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+@media(max-width:640px){
+  .toast{
+    right:12px;
+    bottom:12px;
+    max-width:calc(100vw - 24px);
+    padding:8px 10px;
+    font-size:11px;
+  }
+}
+
+/* Order builder total: make drink selection as readable as the food price. */
+.builder-total-copy{display:grid;gap:2px;min-width:0}
+.builder-total-copy>small{
+  color:#756b63;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.builder-total-copy #buildPrice{
+  display:block;
+  font-size:22px;
+  line-height:1.15;
+}
+.selected-drink-summary{
+  display:block;
+  margin-top:4px;
+  min-height:0;
+}
+.selected-drink-summary strong{
+  display:block;
+  color:#5b251f;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:800;
+}
+@media(max-width:640px){
+  .builder-total{gap:12px}
+  .builder-total-copy #buildPrice{font-size:19px}
+  .selected-drink-summary strong{font-size:12px}
+}
+
+/* Checkout — calmer, cleaner and denser, inspired by a modern store checkout. */
+.checkout-shell{
+  background:#fbf8f4;
+  padding:24px 3vw 64px;
+}
+.checkout-top{width:min(1160px,100%)}
+.checkout-brand{
+  min-height:58px;
+  margin-bottom:18px;
+  padding-bottom:16px;
+  border-bottom:1px solid #e8dfd6;
+}
+.checkout-back{
+  font-size:12px;
+  font-weight:700;
+  color:#5f5751;
+}
+.checkout-progress{
+  justify-content:center;
+  margin:18px 0 26px;
+  color:#82776f;
+}
+.progress-step{font-size:10px}
+.progress-step i{width:29px;height:29px}
+.checkout-grid{
+  grid-template-columns:minmax(0,1.08fr) minmax(340px,.72fr);
+  gap:28px;
+  align-items:start;
+}
+.checkout-heading{
+  padding:2px 2px 16px;
+}
+.checkout-form h1,
+.checkout-heading h1{
+  font-family:Fraunces,serif;
+  font-size:clamp(38px,4.8vw,58px);
+  line-height:1;
+  text-transform:none;
+  letter-spacing:-.035em;
+  margin:5px 0 10px;
+}
+.checkout-heading p{
+  max-width:620px;
+  margin:0;
+  font-size:14px;
+  line-height:1.6;
+}
+.checkout-form.form-stack{gap:14px}
+.checkout-panel{
+  padding:20px;
+  border-radius:16px;
+  background:#fff;
+  border-color:#e5ddd5;
+  box-shadow:none;
+}
+.checkout-panel-title{
+  gap:10px;
+  margin-bottom:15px;
+}
+.checkout-panel-title>span{
+  width:30px;
+  height:30px;
+  font-size:10px;
+}
+.checkout-panel-title h2{
+  font-family:'DM Sans',Arial,sans-serif;
+  font-size:16px;
+  font-weight:800;
+  text-transform:none;
+  letter-spacing:0;
+}
+.checkout-fields{gap:11px}
+.checkout-shell .field label{
+  font-size:11px;
+  font-weight:800;
+}
+.checkout-shell .field input,
+.checkout-shell .field textarea{
+  padding:12px 13px;
+  border-radius:10px;
+  font-size:14px;
+}
+.checkout-shell .field textarea{min-height:88px}
+.fulfilment{gap:10px}
+.fulfilment-card{
+  min-height:96px;
+  padding:14px;
+  border-radius:13px;
+}
+.fulfilment-card>i{width:34px;height:34px}
+.fulfilment-card b{font-size:13px}
+.fulfilment-card span{font-size:11px}
+.checkout-summary{
+  border-radius:18px;
+  padding:20px;
+  top:18px;
+  box-shadow:0 18px 50px rgba(44,30,21,.16);
+}
+.summary-kicker{
+  font-family:'DM Sans',Arial,sans-serif;
+  font-size:18px;
+  font-weight:800;
+  text-transform:none;
+  margin-bottom:10px;
+}
+.checkout-item{
+  grid-template-columns:52px 1fr auto;
+  gap:10px;
+  padding:11px 0;
+}
+.checkout-item img{width:52px;height:56px;border-radius:8px}
+.checkout-item b{font-size:13px}
+.checkout-item small{font-size:10px;line-height:1.4;color:#bcb2aa}
+.summary-line{padding:11px 0;font-size:12px}
+.summary-line.total{font-size:17px}
+.checkout-trust{font-size:10px}
+.checkout-submit{min-height:48px;border-radius:11px}
+@media(max-width:980px){
+  .checkout-grid{grid-template-columns:1fr}
+  .checkout-summary{position:static}
+}
+@media(max-width:640px){
+  .checkout-shell{padding:16px 14px 45px}
+  .checkout-brand{min-height:50px}
+  .checkout-brand .brand{font-size:21px}
+  .checkout-back{font-size:10px}
+  .checkout-progress{gap:6px;margin:14px 0 22px}
+  .progress-line{width:28px}
+  .progress-step span{display:none}
+  .checkout-form h1,.checkout-heading h1{font-size:38px}
+  .checkout-fields{grid-template-columns:1fr}
+  .field-wide{grid-column:auto}
+  .fulfilment{grid-template-columns:1fr}
+  .checkout-panel{padding:16px}
+}
+
+/* Make the creator credit intentionally visible without overpowering the footer. */
+.legal span:last-child{
+  color:#cfc3b8;
+  font-weight:600;
+}
+.legal span:last-child>a:first-child{
+  color:var(--gold);
+  font-weight:900;
+  letter-spacing:.05em;
+  text-decoration:underline;
+  text-decoration-color:rgba(248,200,78,.45);
+  text-underline-offset:3px;
+}
+.legal span:last-child>a:first-child:hover{
+  color:#fff;
+  text-decoration-color:#fff;
+}

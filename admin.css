@@ -118,3 +118,342 @@
 
 /* Sidebar cleanup: status/account controls removed; close control is mobile-only. */
 @media (min-width:821px){.admin-side .side-close{display:none!important}}
+
+
+/* ==========================================================
+   DISTRICT CONTROL — COMPACT DESKTOP REDESIGN
+   ========================================================== */
+:root{
+  --admin-bg:#f7f4f0;
+  --admin-card:#ffffff;
+  --admin-line:#e5ded7;
+  --admin-text:#171411;
+  --admin-muted:#7a716a;
+  --admin-accent:#d9362b;
+}
+.admin-shell{min-height:100dvh}
+.admin-side{
+  width:228px;
+  padding:18px 13px 14px;
+  background:#11100e;
+}
+.admin-side-head{min-height:54px;padding:0 5px}
+.admin-logo-wrap{gap:9px;min-width:0}
+.admin-logo-wrap img{width:42px;height:42px;border-radius:10px;object-fit:cover}
+.admin-brand b{font-size:18px;line-height:1.05}
+.admin-brand span{font-size:7px;letter-spacing:.16em}
+.side-close{display:none!important}
+.admin-nav{
+  margin:16px -2px 12px;
+  gap:2px;
+  padding-right:3px;
+}
+.admin-nav button{
+  min-height:41px;
+  padding:9px 10px;
+  border-radius:9px;
+  grid-template-columns:20px minmax(0,1fr) auto;
+  gap:8px;
+  font-size:11.5px;
+  font-weight:650;
+}
+.admin-nav button i{font-size:12px}
+.nav-count{font-size:9px;padding:3px 6px}
+.side-bottom{
+  padding-top:10px;
+  gap:1px;
+}
+.side-bottom a,.side-bottom button{
+  padding:9px 10px;
+  border-radius:8px;
+  font-size:11px;
+}
+.side-bottom a:hover,.side-bottom button:hover{background:#ffffff0c;color:#fff}
+
+.admin-main{
+  margin-left:228px;
+  background:var(--admin-bg);
+}
+.admin-top{
+  height:66px;
+  padding:0 24px;
+  background:rgba(247,244,240,.94);
+  border-bottom:1px solid var(--admin-line);
+  backdrop-filter:blur(14px);
+}
+.admin-top-title{display:flex;align-items:center;min-width:0}
+.admin-top-title h1,
+#viewTitle{
+  margin:0;
+  font-size:19px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.admin-top-actions{gap:7px}
+.admin-top .icon-square{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:transparent;
+  border-color:transparent;
+}
+.admin-top .icon-square:hover{background:#fff;border-color:var(--admin-line)}
+.mobile-only-menu{display:none!important}
+
+.admin-content{
+  max-width:1320px;
+  padding:24px 28px 48px;
+}
+.page-intro{
+  align-items:center;
+  margin:2px 0 20px;
+  gap:20px;
+}
+.page-intro>div{min-width:0}
+.page-intro span,.panel-head span,.drawer-head span{
+  font-size:8.5px;
+  letter-spacing:.15em;
+}
+.page-intro h2{
+  font-family:'DM Sans',sans-serif;
+  font-size:30px;
+  line-height:1.15;
+  font-weight:800;
+  text-transform:none;
+  letter-spacing:-.035em;
+  margin:4px 0 5px;
+  max-width:none;
+}
+.page-intro p{
+  max-width:660px;
+  margin:0;
+  font-size:12.5px;
+  line-height:1.55;
+}
+.page-intro>.badge{white-space:nowrap}
+
+.metric-grid{
+  gap:12px;
+  margin-bottom:14px;
+}
+.metric-card{
+  min-height:148px;
+  padding:17px;
+  border-radius:14px;
+  box-shadow:none;
+}
+.metric-card:hover{
+  transform:none;
+  box-shadow:0 8px 24px rgba(32,22,12,.06);
+  border-color:#d4cbc3;
+}
+.metric-card i{font-size:15px}
+.metric-card span{
+  margin:18px 0 3px;
+  font-size:10.5px;
+}
+.metric-card b{
+  font-size:24px;
+  line-height:1.1;
+}
+.metric-card small{
+  margin-top:8px;
+  display:block;
+  font-size:9.5px;
+}
+.dashboard-grid{gap:12px}
+.admin-panel{
+  border-radius:14px;
+  padding:17px;
+  box-shadow:none;
+}
+.panel-head{margin-bottom:12px}
+.panel-head h3{
+  font-size:16px;
+  margin:2px 0;
+}
+.text-btn{font-size:11px}
+.list-row{
+  grid-template-columns:minmax(160px,1.2fr) minmax(120px,.8fr) minmax(100px,.65fr) auto;
+  gap:10px;
+  padding:12px 5px;
+}
+.list-row h4{font-size:12.5px}
+.list-row p,.list-row small{font-size:10px}
+.badge{font-size:8px;padding:5px 8px}
+
+.admin-tabs{
+  gap:4px;
+  margin-bottom:14px;
+  padding:4px;
+  border-radius:11px;
+}
+.admin-tabs button{
+  min-height:36px;
+  padding:8px 11px;
+  border-radius:8px;
+  font-size:10.5px;
+}
+.toolbar{gap:8px;margin-bottom:11px}
+.toolbar input,.toolbar select,
+.admin-form input,.admin-form textarea,.admin-form select,
+.drawer-body input,.drawer-body textarea,.drawer-body select{
+  border-radius:9px;
+  padding:10px 11px;
+  font-size:12px;
+}
+.primary,.secondary,.small-btn{
+  border-radius:9px;
+  padding:9px 12px;
+  font-size:11px;
+}
+.product-admin-grid,.slide-admin-grid,.team-admin-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:11px;
+}
+.admin-card{border-radius:14px}
+.admin-card-media{height:170px}
+.admin-card-copy{padding:14px}
+.admin-card-copy h3{font-size:16px}
+.admin-card-copy p{font-size:11px}
+.admin-gallery{gap:8px}
+.admin-photo{border-radius:11px}
+
+/* Order drawer: labels live down the left side instead of across the top. */
+.admin-drawer{
+  width:min(610px,100vw);
+  background:#f8f6f3;
+}
+.drawer-head{padding:19px 21px}
+.drawer-head h2{font-size:20px}
+.drawer-body{padding:17px 20px 28px}
+.drawer-section{
+  padding:16px;
+  border-radius:13px;
+  margin-bottom:11px;
+}
+.drawer-section h3{font-size:15px}
+.drawer-grid{gap:12px}
+.drawer-grid h3{font-size:17px}
+.drawer-grid p{font-size:11px}
+.fulfilment-summary{gap:8px}
+.fulfilment-summary>div{padding:12px;border-radius:10px}
+.order-detail-list{display:grid;gap:10px;margin-top:12px}
+.order-detail-card{
+  overflow:hidden;
+  border:1px solid #e2dad2;
+  border-radius:12px;
+  background:#fff;
+}
+.order-detail-card.drink-line{
+  border-color:#e8d3a3;
+  background:#fffdf7;
+}
+.order-detail-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 13px;
+  border-bottom:1px solid #eee8e2;
+  background:#fbf8f5;
+}
+.order-detail-card-head>div{display:flex;align-items:center;gap:9px;min-width:0}
+.order-detail-card-head strong{font-size:12.5px}
+.order-line-number{
+  display:grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  border-radius:7px;
+  background:#171411;
+  color:#fff;
+  font-size:8px;
+  font-weight:900;
+}
+.order-item-type{
+  display:inline-flex;
+  align-items:center;
+  min-height:20px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#f1eae3;
+  color:#766a61;
+  font-size:7.5px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.drink-line .order-item-type{
+  background:#fff0c8;
+  color:#765411;
+}
+.order-detail-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:0;
+}
+.order-detail-table th,
+.order-detail-table td{
+  padding:9px 13px;
+  border-bottom:1px solid #f0ebe6;
+  text-align:left;
+  vertical-align:top;
+  font-size:11px;
+  line-height:1.4;
+}
+.order-detail-table tr:last-child th,
+.order-detail-table tr:last-child td{border-bottom:0}
+.order-detail-table th{
+  width:112px;
+  color:#8a8179;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  background:#fcfaf8;
+}
+.order-detail-table td{color:#28221d}
+.order-detail-total th,
+.order-detail-total td{
+  padding-top:11px;
+  padding-bottom:11px;
+  background:#f8f4ee;
+}
+.order-detail-total td strong{font-size:13px;color:#9f2d25}
+
+/* Tables and forms stay compact enough to scan on desktop. */
+.data-table th{font-size:8.5px}
+.data-table td{font-size:11px}
+.bulk-email-composer{border-radius:14px;padding:17px}
+.bulk-email-composer h3{font-size:17px}
+
+@media(max-width:1100px){
+  .metric-grid{grid-template-columns:repeat(2,1fr)}
+  .product-admin-grid,.slide-admin-grid,.team-admin-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .admin-side{
+    width:min(270px,86vw);
+    padding:18px 14px;
+  }
+  .side-close{display:grid!important}
+  .admin-main{margin-left:0}
+  .admin-top{padding:0 14px;height:60px}
+  .mobile-only-menu{display:grid!important}
+  .admin-top-title h1,#viewTitle{font-size:17px}
+  .admin-content{padding:18px 14px 36px}
+  .page-intro{align-items:flex-start}
+  .page-intro h2{font-size:25px}
+  .metric-grid{grid-template-columns:1fr 1fr}
+  .metric-card{min-height:132px;padding:14px}
+  .dashboard-grid{grid-template-columns:1fr}
+  .product-admin-grid,.slide-admin-grid,.team-admin-grid{grid-template-columns:1fr}
+  .order-detail-table th{width:96px}
+}
+@media(max-width:480px){
+  .metric-grid{grid-template-columns:1fr}
+  .metric-card{min-height:112px}
+  .page-intro{display:block}
+  .page-intro>.badge{margin-top:10px}
+}
