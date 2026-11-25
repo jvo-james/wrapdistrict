@@ -5,6 +5,10 @@
   const result=document.querySelector('#menuResultCount');
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   let activeFilter='all';
+  const products=()=>{
+    const list=window.WD?.products?.()||window.WD_PRODUCTS||[];
+    return Array.isArray(list)?list:[];
+  };
   const groupFor=p=>{
     if(['shawarma','burger'].includes(p.id))return'wraps';
     if(['loaded-fries','loaded-angwamo','loaded-jollof'].includes(p.id))return'loaded';
@@ -13,27 +17,33 @@
     return'plates';
   };
   function ordered(){
-    const by=new Map(WD.products().map(p=>[p.id,p]));
-    return (window.WD_MENU_ORDER||[]).map(id=>by.get(id)).filter(Boolean);
+    const by=new Map(products().map(p=>[p.id,p]));
+    const ids=window.WD_MENU_ORDER||[];
+    const listed=ids.map(id=>by.get(id)).filter(Boolean);
+    return listed.length?listed:products().filter(p=>!p.isDrink);
   }
   function render(){
-    const products=ordered().filter(p=>!p.isDrink&&!p.hiddenFromMenu);
-    const shown=products.filter(p=>activeFilter==='all'||groupFor(p)===activeFilter);
-    result.textContent=`${shown.length} ${shown.length===1?'dish':'dishes'} to choose from`;
+    const all=products();
+    const menuItems=activeFilter==='drinks'
+      ? all.filter(p=>p.isDrink)
+      : ordered().filter(p=>!p.isDrink&&!p.hiddenFromMenu);
+    const shown=menuItems.filter(p=>activeFilter==='all'||activeFilter==='drinks'||groupFor(p)===activeFilter);
+    if(result)result.textContent=`${shown.length} ${shown.length===1?(activeFilter==='drinks'?'drink':'dish'):(activeFilter==='drinks'?'drinks':'dishes')} to choose from`;
     grid.innerHTML=shown.map(p=>{
       const unavailable=p.available===false;
-      const promo=WD.activeProductPromo?.(p.id);
+      const promo=window.WD?.activeProductPromo?.(p.id);
       const href=`order.html?product=${encodeURIComponent(p.id)}&from=menu`;
-      const promoMarkup=promo?`<span class="menu-card-v4-promo"><i class="fa-solid fa-bolt"></i> ${esc(promo.badge||WD.promoOfferLabel(promo))}</span>`:'';
+      const promoMarkup=promo?`<span class="menu-card-v4-promo"><i class="fa-solid fa-bolt"></i> ${esc(promo.badge||window.WD.promoOfferLabel(promo))}</span>`:'';
+      const price=window.WD?.productPriceLabel?.(p)||`From ${window.WD?.money?.(p.from)||`GHS ${Number(p.from||0).toFixed(2)}`}`;
       return `<article class="menu-card-v4 ${unavailable?'is-unavailable':''} ${promo?'has-live-promo':''}" ${unavailable?'':`data-href="${href}" tabindex="0" role="link" aria-label="Build ${esc(p.name)}"`}>
         <div class="menu-card-v4-image">
-          <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.src='images/placeholder-food.svg'">
+          <img src="${esc(p.image||'images/placeholder-food.svg')}" alt="${esc(p.name)}" loading="lazy" decoding="async" onerror="this.src='images/placeholder-food.svg'">
           ${promoMarkup}
           ${unavailable?'<span class="menu-card-v4-unavailable">Unavailable today</span>':'<span class="menu-card-v4-open"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>'}
         </div>
         <div class="menu-card-v4-copy">
-          <div><span class="menu-card-v4-category">${esc(p.category||'From the kitchen')}</span><h3>${esc(p.name)}</h3><p>${esc(p.tagline||p.description||'Made fresh when you order.')}</p></div>
-          <div class="menu-card-v4-bottom"><strong>${WD.productPriceLabel?.(p)||`From ${WD.money(p.from)}`}</strong>${unavailable?'':`<span>Build yours <i class="fa-solid fa-arrow-right"></i></span>`}</div>
+          <div><span class="menu-card-v4-category">${esc(p.category||(p.isDrink?'Drinks':'From the kitchen'))}</span><h3>${esc(p.name)}</h3><p>${esc(p.tagline||p.description||'Made fresh when you order.')}</p></div>
+          <div class="menu-card-v4-bottom"><strong>${esc(price)}</strong>${unavailable?'':`<span>${p.isDrink?'Add to order':'Build yours'} <i class="fa-solid fa-arrow-right"></i></span>`}</div>
         </div>
       </article>`;
     }).join('')||'<div class="menu-v4-empty"><h3>Nothing in this section just yet.</h3><p>Choose another category to see what is cooking.</p></div>';
