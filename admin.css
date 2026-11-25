@@ -480,3 +480,30 @@
  .gallery-event-filter{max-width:none}
  .admin-photo-outreach>img{height:125px}
 }
+
+
+/* Feed the Street bulk gallery tools */
+.gallery-upload-choice{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:15px;border:1px solid #e5d9cf;border-radius:15px;background:#fbf7f2;color:var(--ink);margin-top:14px}
+.gallery-upload-choice:hover{border-color:#c58b52;background:#fffaf2}
+.gallery-upload-choice:disabled{opacity:.55;cursor:wait}
+.gallery-upload-choice>span:nth-child(2){display:grid;gap:4px;flex:1}
+.gallery-upload-choice b{font-size:13px}
+.gallery-upload-choice small,.gallery-upload-hint{font-size:11px;color:var(--muted);line-height:1.5}
+.gallery-upload-icon{width:42px;height:42px;border-radius:12px;background:#f3e7d7;color:#9b4a31;display:grid;place-items:center;font-size:17px}
+.gallery-upload-choice>i:last-child{color:#9b4a31}
+.gallery-upload-hint{margin-top:10px}
+.gallery-upload-status{margin-top:14px;padding:10px 12px;border-radius:10px;background:#f1ece6;color:#554b43;font-size:12px;font-weight:700}
+.gallery-upload-queue{display:grid;gap:7px;margin-top:10px;max-height:245px;overflow:auto}
+.gallery-upload-file{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid #eee7e0;border-radius:10px;background:#fff;min-width:0}
+.gallery-upload-file>i:first-child{color:#a75b42}
+.gallery-upload-file span{display:grid;gap:2px;min-width:0;flex:1}
+.gallery-upload-file b{font-size:11px;overflow-wrap:anywhere}
+.gallery-upload-file small{font-size:10px;color:var(--muted)}
+.gallery-upload-file .upload-ready{color:#287a55}
+.gallery-upload-file .upload-error{color:#bd332a}
+.gallery-upload-choice:focus-visible,.photo-tools button:focus-visible{outline:3px solid #dcae58;outline-offset:2px}
+.admin-photo.is-hidden img{filter:grayscale(.55);opacity:.58}
+.admin-photo.is-hidden{outline:2px dashed #c6b9ad;outline-offset:-3px}
+.photo-tools .photo-visibility-btn{width:auto;min-width:78px;padding:0 11px;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#4c423a;font-size:11px;font-weight:800}
+.photo-tools .photo-visibility-btn.restore{background:#e1f1e5;color:#1d6a43}
+@media(max-width:780px){.gallery-upload-choice{padding:13px}.gallery-upload-status{font-size:11px}}

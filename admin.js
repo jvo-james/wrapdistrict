@@ -1204,71 +1204,134 @@ function products(){const a=rows('wdProducts',WD_PRODUCTS).filter(p=>!p.isDrink)
 function promotions(){const a=rows('wdPromos');$('#promoList').innerHTML=a.length?a.map(p=>`<div class="list-row" data-promo="${esc(p.id)}"><div><h4>${esc(p.title)}</h4><small>${esc(p.kind==='product'?`${(rows('wdProducts',WD_PRODUCTS).find(x=>x.id===p.productId)||{}).name||'Product'} · ${p.message||p.subtitle||''}`:p.subtitle||'Site-wide promotion')}</small></div><div><span class="badge ${p.active?'on':'off'}">${p.active?'LIVE':'OFF'}</span></div><div><small>${esc(p.kind==='product'?(p.badge||'Product promo'):'Campaign')}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No promotions yet. Create one when you are ready to run an offer.</p>';$$('[data-promo]').forEach(b=>b.onclick=()=>promoDrawer(b.dataset.promo))}function promoDrawer(id,newItem=false){const p=newItem?{id:uid('promo'),kind:'product',productId:'shawarma',type:'discount_percent',title:'',subtitle:'',message:'',badge:'PROMO',value:10,buyQty:2,freeQty:1,freeItem:'Coca Cola',freeItemId:'drink-coke',image:'',active:false,start:'',end:''}:JSON.parse(JSON.stringify(rows('wdPromos').find(x=>x.id===id)));const products=rows('wdProducts',WD_PRODUCTS);openDrawer(newItem?'Create promotion':p.title||'Promotion','PROMOTION CONTROL',`<div class="drawer-section"><div class="field"><label>Promotion scope</label><select id="prKind"><option value="product" ${p.kind==='product'?'selected':''}>A specific menu item</option><option value="campaign" ${p.kind!=='product'?'selected':''}>General website campaign</option></select></div><div id="productPromoFields"><div class="field"><label>Menu item</label><select id="prProduct">${products.map(x=>`<option value="${esc(x.id)}" ${x.id===p.productId?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div><div class="field"><label>Offer type</label><select id="prType"><option value="discount_percent" ${p.type==='discount_percent'?'selected':''}>Percentage discount</option><option value="discount_fixed" ${p.type==='discount_fixed'?'selected':''}>Amount off</option><option value="set_price" ${p.type==='set_price'?'selected':''}>Set promotional price</option><option value="buy_x_get_y" ${p.type==='buy_x_get_y'?'selected':''}>Buy X, get Y free</option><option value="free_item" ${p.type==='free_item'?'selected':''}>Free item with purchase</option><option value="message" ${p.type==='message'?'selected':''}>Custom promo message only</option></select></div><div class="drawer-grid"><div class="field"><label>Discount / promo value</label><input id="prValue" type="number" min="0" step="0.01" value="${Number(p.value||0)}"></div><div class="field"><label>Bright card tag</label><input id="prBadge" maxlength="22" value="${esc(p.badge||'PROMO')}" placeholder="e.g. BUY 2 GET 1"></div><div class="field"><label>Buy quantity</label><input id="prBuy" type="number" min="1" value="${Number(p.buyQty||2)}"></div><div class="field"><label>Free quantity</label><input id="prFree" type="number" min="1" value="${Number(p.freeQty||1)}"></div><div class="field"><label>Free product / drink</label><select id="prFreeItem">${products.map(x=>`<option value="${esc(x.id)}" ${String(x.id)===String(p.freeItemId||'')||String(x.name)===String(p.freeItem||'')?'selected':''}>${esc(x.name)}${x.isDrink?' · Drink':''}</option>`).join('')}</select></div></div></div>${uploadBox('promoImage',p.image||'')}<div class="field"><label>Promotion title</label><input id="prTitle" value="${esc(p.title||'')}"></div><div class="field"><label>Customer-facing message</label><textarea id="prSubtitle">${esc(p.message||p.subtitle||'')}</textarea></div><div class="drawer-grid"><div class="field"><label>Status</label><select id="prActive"><option value="yes" ${p.active?'selected':''}>Live</option><option value="no" ${!p.active?'selected':''}>Not live</option></select></div><div class="field"><label>Start date</label><input type="date" id="prStart" value="${esc(p.start||'')}"></div><div class="field"><label>End date</label><input type="date" id="prEnd" value="${esc(p.end||'')}"></div></div><div class="promo-presets"><button type="button" class="small-btn" id="presetShawarma">Shawarma · Buy 2 get 1</button><button type="button" class="small-btn" id="presetFries">Loaded Fries · Free Coke</button></div></div><div class="drawer-actions"><button class="primary" id="savePromo">${newItem?'Create promotion':'Save promotion'}</button>${newItem?'':`<button class="small-btn danger" id="deletePromo">Remove promotion</button>`}</div>`);const toggle=()=>$('#productPromoFields').style.display=$('#prKind').value==='product'?'':'none';$('#prKind').onchange=toggle;toggle();const promoImage=$('#promoImage');if(promoImage)promoImage.onclick=()=>chooseImage(promoImage,'hero');$('#presetShawarma').onclick=()=>{$('#prKind').value='product';$('#prProduct').value='shawarma';$('#prType').value='buy_x_get_y';$('#prBuy').value=2;$('#prFree').value=1;$('#prBadge').value='BUY 2 GET 1';$('#prTitle').value='Shawarma Triple Treat';$('#prSubtitle').value='Buy two of this shawarma and get the third one free.';toggle()};$('#presetFries').onclick=()=>{$('#prKind').value='product';$('#prProduct').value='loaded-fries';$('#prType').value='free_item';$('#prFreeItem').value='drink-coke';$('#prBadge').value='FREE COKE';$('#prTitle').value='Fries + Coke';$('#prSubtitle').value='Get a free Coke with every qualifying Loaded Fries order.';toggle()};$('#savePromo').onclick=async e=>{const b=e.currentTarget;busy(b,true);try{p.kind=$('#prKind').value;p.productId=$('#prProduct').value;p.type=$('#prType').value;p.value=Number($('#prValue').value||0);p.badge=$('#prBadge').value.trim()||'PROMO';p.buyQty=Number($('#prBuy').value||2);p.freeQty=Number($('#prFree').value||1);p.freeItemId=$('#prFreeItem').value;const gift=products.find(x=>String(x.id)===String(p.freeItemId));p.freeItem=gift?.name||'';p.image=$('#promoImage')?.dataset.url||p.image||'';p.title=$('#prTitle').value.trim();p.subtitle=$('#prSubtitle').value.trim();p.message=p.subtitle;p.active=$('#prActive').value==='yes';p.start=$('#prStart').value;p.end=$('#prEnd').value;if(!p.title||!p.subtitle)throw Error('Add a title and customer-facing message.');if(!p.start||!p.end)throw Error('Choose both a start date and an end date so customers can see exactly how long the promo runs.');if(p.start>p.end)throw Error('The promo end date must be on or after the start date.');if(p.kind==='product'&&p.active){for(const other of rows('wdPromos').filter(x=>String(x.id)!==String(p.id)&&x.kind==='product'&&String(x.productId)===String(p.productId)&&x.active!==false)){other.active=false;await save('promos',other)}}await save('promos',p);renderAll();toast('Promotion saved and synced to the website.');closeDrawer()}catch(err){toast(err.message||'Promotion could not be saved.')}finally{busy(b,false)}};if($('#deletePromo'))$('#deletePromo').onclick=async e=>{if(!confirm('Remove this promotion?'))return;busy(e.currentTarget,true,'Removing');await del('promos',p.id);renderAll();closeDrawer();toast('Promotion removed.')}}$('#addPromo').onclick=()=>promoDrawer(null,true);
 function slides(){const a=rows('wdSlides');$('#slideList').innerHTML=a.map(s=>`<article class="admin-card" data-slide="${s.id}"><div class="admin-card-media"><img src="${esc(s.image)}"><span class="badge ${s.active!==false?'on':'off'}">${s.active!==false?'ACTIVE':'PAUSED'}</span></div><div class="admin-card-copy"><small>${esc(s.kicker)}</small><h3>${esc(s.title)}</h3><p>${esc(s.copy||'')}</p><div class="admin-card-foot"><span>${esc(s.cta||'')}</span><span class="small-btn">Edit slide</span></div></div></article>`).join('');$$('[data-slide]').forEach(b=>b.onclick=()=>slideDrawer(b.dataset.slide))}function slideDrawer(id,newItem=false){const s=newItem?{id:uid('slide'),admin:true,kicker:'',title:'',copy:'',image:'',cta:'Order now',href:'menu.html',active:true}:JSON.parse(JSON.stringify(rows('wdSlides').find(x=>x.id===id)));openDrawer(newItem?'Add homepage slide':s.title,'HOMEPAGE SLIDE',`<div class="drawer-section">${uploadBox('slideImage',s.image)}${!newItem?'<button type="button" class="reset-image-btn" id="resetSlideImage" style="margin-top:9px">Use original image</button>':''}<div class="drawer-grid" style="margin-top:12px"><div class="field"><label>Small label</label><input id="slKicker" value="${esc(s.kicker||'')}"></div><div class="field"><label>Button text</label><input id="slCta" value="${esc(s.cta||'')}"></div></div><div class="field"><label>Main headline</label><input id="slTitle" value="${esc(s.title||'')}"></div><div class="field"><label>Supporting text</label><textarea id="slCopy">${esc(s.copy||'')}</textarea></div><div class="drawer-grid"><div class="field"><label>Button link</label><input id="slHref" value="${esc(s.href||'menu.html')}"></div><div class="field"><label>Show on homepage</label><select id="slActive"><option value="yes" ${s.active!==false?'selected':''}>Yes</option><option value="no" ${s.active===false?'selected':''}>No, pause it</option></select></div></div></div><div class="drawer-actions"><button class="primary" id="saveSlide">${newItem?'Add slide':'Save slide'}</button>${newItem?'':`<button class="small-btn danger" id="deleteSlide">Remove slide</button>`}</div>`);const im=$('#slideImage');im.onclick=()=>chooseImage(im,'hero');if($('#resetSlideImage'))$('#resetSlideImage').onclick=()=>{const o=WD_DEFAULT_SLIDES.find(x=>String(x.id)===String(s.id));if(!o)return toast('This slide was created in the admin, so it has no original image.');im.dataset.url=o.image;im.innerHTML=`<img src="${esc(o.image)}" alt="Original slide image"><div class="upload-copy"><b>Original image restored</b></div>`};$('#saveSlide').onclick=async e=>{busy(e.currentTarget,true);try{s.kicker=$('#slKicker').value.trim();s.title=$('#slTitle').value.trim();s.copy=$('#slCopy').value.trim();s.cta=$('#slCta').value.trim();s.href=$('#slHref').value.trim()||'menu.html';s.active=$('#slActive').value==='yes';s.image=im.dataset.url||s.image;if(!s.title||!s.image)throw Error();await save('slides',s);renderAll();closeDrawer();toast('Homepage slide saved.')}catch{toast('Add a headline and image before saving.')}finally{busy(e.currentTarget,false)}};if($('#deleteSlide'))$('#deleteSlide').onclick=async e=>{if(!confirm('Remove this homepage slide?'))return;busy(e.currentTarget,true,'Removing');await del('slides',s.id);renderAll();closeDrawer();toast('Slide removed.')}}$('#addSlide').onclick=()=>slideDrawer(null,true);
 function reviews(){const a=rows('wdReviews');$('#reviewList').innerHTML=a.length?a.map(r=>`<div class="list-row" data-review="${r.id}"><div><h4>${esc(r.name)} · ${'★'.repeat(Number(r.stars||0))}</h4><small>${esc(r.location||'Location not added')}</small></div><div><span class="badge ${r.approved?'on':'warn'}">${r.approved?'PUBLIC':'WAITING'}</span></div><div><small>${esc(String(r.text||'').slice(0,80))}${String(r.text||'').length>80?'…':''}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No reviews yet.</p>';$$('[data-review]').forEach(b=>b.onclick=()=>reviewDrawer(b.dataset.review))}function reviewDrawer(id){const r=rows('wdReviews').find(x=>x.id===id);openDrawer(`${r.name}'s review`,'CUSTOMER REVIEW',`<div class="drawer-section"><p style="color:#c28c00;font-size:20px">${'★'.repeat(Number(r.stars||0))}</p><h3>${esc(r.text)}</h3><p>${esc(r.name)} · ${esc(r.location||'')}</p><small>${esc(r.email||'Email not provided')}</small></div><div class="drawer-actions"><button class="primary" id="toggleReview">${r.approved?'Hide from website':'Approve and publish'}</button><button class="small-btn danger" id="deleteReview">Delete review</button></div>`);$('#toggleReview').onclick=async e=>{busy(e.currentTarget,true);r.approved=!r.approved;await save('reviews',r);renderAll();closeDrawer();toast(r.approved?'Review published.':'Review hidden.')} ;$('#deleteReview').onclick=async e=>{if(!confirm('Delete this review?'))return;busy(e.currentTarget,true,'Deleting');await del('reviews',r.id);renderAll();closeDrawer();toast('Review deleted.')}}
+function galleryRows(){
+ const raw=rows('wdGallery',WD_IMAGE_LIST||[]);
+ const saved=Array.isArray(raw)?raw.filter(item=>item&&typeof item==='object'):[];
+ const defaults=(WD_IMAGE_LIST||[]).map((url,index)=>{
+  const id=`repo-may-${String(index+1).padStart(2,'0')}`;
+  const override=saved.find(item=>String(item.id)===id)||{};
+  return {...override,id,url,eventId:'may-2026',position:Number(override.position??index),isRepositoryImage:true,hidden:override.hidden===true};
+ });
+ const defaultIds=new Set(defaults.map(item=>item.id));
+ const uploads=saved.filter(item=>!defaultIds.has(String(item.id))).map((item,index)=>({...item,position:Number(item.position??defaults.length+index),hidden:item.hidden===true}));
+ const combined=[...defaults,...uploads].sort((a,b)=>Number(a.position||0)-Number(b.position||0));
+ cache.set('wdGallery',combined);
+ return combined;
+}
 function gallery(){
- const all=rows('wdGallery');
+ const all=galleryRows();
  const filter=$('#galleryEventFilter');
  const selected=filter?.value||'all';
- const eventFor=item=>typeof item==='string'?'may-2026':(item.eventId||'may-2026');
  const names={'may-2026':'May 2026','october-2026':'October 2026','december-2026':'Boxing Day 2026'};
- const visible=all.map((item,index)=>({item,index,eventId:eventFor(item)})).filter(row=>{const url=typeof row.item==='string'?row.item:row.item?.url;return url&&!/images\.unsplash\.com/i.test(url)&&(selected==='all'||row.eventId===selected)});
- $('#adminGallery').innerHTML=visible.length?visible.map(({item,index,eventId})=>{
-  const url=typeof item==='string'?item:item.url;
-  const id=typeof item==='string'?`local-${index}`:item.id;
-  return `<div class="admin-photo admin-photo-outreach">
-    <img src="${esc(url)}" alt="Feed the Street photo" loading="lazy">
-    <span class="admin-photo-event">${names[eventId]||'Feed the Street'}</span>
+ const visible=all.filter(item=>item.url&&(selected==='hidden'?item.hidden===true:(item.hidden!==true&&(selected==='all'||item.eventId===selected))));
+ $('#adminGallery').innerHTML=visible.length?visible.map((item,index)=>{
+  const hidden=item.hidden===true;
+  return `<div class="admin-photo admin-photo-outreach ${hidden?'is-hidden':''}">
+    <img src="${esc(item.url)}" alt="Feed the Street photo" loading="lazy" decoding="async">
+    <span class="admin-photo-event">${hidden?'Hidden':(names[item.eventId]||'Feed the Street')}</span>
     <div class="photo-tools">
-      <button type="button" data-up="${index}" title="Move earlier" aria-label="Move photo earlier"><i class="fa-solid fa-arrow-left"></i></button>
-      <button type="button" data-down="${index}" title="Move later" aria-label="Move photo later"><i class="fa-solid fa-arrow-right"></i></button>
-      ${typeof item==='string'?'':`<button type="button" data-photo-remove="${esc(id)}" title="Remove photo" aria-label="Remove photo"><i class="fa-solid fa-trash"></i></button>`}
+      <button type="button" data-photo-visibility="${esc(item.id)}" title="${hidden?'Restore photo':'Hide photo from website'}" aria-label="${hidden?'Restore photo':'Hide photo from website'}" class="photo-visibility-btn ${hidden?'restore':''}"><i class="fa-solid fa-${hidden?'rotate-left':'eye-slash'}"></i>${hidden?'Restore':'Hide'}</button>
     </div>
-    ${typeof item==='string'?'':`<label class="admin-photo-reassign">Outreach<select data-photo-event="${esc(id)}"><option value="may-2026" ${eventId==='may-2026'?'selected':''}>May 2026</option><option value="october-2026" ${eventId==='october-2026'?'selected':''}>October 2026</option><option value="december-2026" ${eventId==='december-2026'?'selected':''}>Boxing Day 2026</option></select></label>`}
+    <label class="admin-photo-reassign">Outreach<select data-photo-event="${esc(item.id)}" ${hidden||item.isRepositoryImage?'disabled':''}><option value="may-2026" ${item.eventId==='may-2026'?'selected':''}>May 2026</option><option value="october-2026" ${item.eventId==='october-2026'?'selected':''}>October 2026</option><option value="december-2026" ${item.eventId==='december-2026'?'selected':''}>Boxing Day 2026</option></select></label>
   </div>`;
- }).join(''):'<p class="empty-admin">No photos in this outreach yet. Add the first one when you are ready.</p>';
- $$('[data-up]').forEach(button=>button.onclick=()=>movePhoto(+button.dataset.up,-1));
- $$('[data-down]').forEach(button=>button.onclick=()=>movePhoto(+button.dataset.down,1));
- $$('[data-photo-remove]').forEach(button=>button.onclick=async()=>{
-  if(!confirm('Remove this gallery photo?'))return;
-  await del('gallery',button.dataset.photoRemove);renderAll();toast('Photo removed.');
+ }).join(''):'<p class="empty-admin">No photos in this view. Hidden photos can be restored from the “Hidden photos” filter.</p>';
+ $$('[data-photo-visibility]').forEach(button=>button.onclick=async()=>{
+  const item=galleryRows().find(photo=>String(photo.id)===String(button.dataset.photoVisibility));
+  if(!item)return;
+  const wasHidden=item.hidden===true;
+  item.hidden=!wasHidden;
+  item.hiddenAt=item.hidden?new Date().toISOString():null;
+  try{await save('gallery',item);gallery();toast(item.hidden?'Photo hidden from the website. You can restore it anytime.':'Photo restored to the website.');}
+  catch(error){item.hidden=wasHidden;console.error(error);toast('The photo visibility could not be updated.');}
  });
  $$('[data-photo-event]').forEach(select=>select.onchange=async()=>{
-  const item=rows('wdGallery').find(photo=>String(photo.id)===String(select.dataset.photoEvent));
+  const item=galleryRows().find(photo=>String(photo.id)===String(select.dataset.photoEvent));
   if(!item)return;
   item.eventId=select.value;
-  try{await save('gallery',item);gallery();toast('Photo moved to the selected outreach.')}
-  catch(error){console.error(error);toast('The photo could not be updated.')}
+  try{await save('gallery',item);gallery();toast('Photo moved to the selected outreach.');}
+  catch(error){console.error(error);toast('The photo could not be updated.');}
  });
- if(filter&&!filter.dataset.bound){filter.dataset.bound='1';filter.onchange=gallery}
+ if(filter&&!filter.dataset.bound){filter.dataset.bound='1';filter.onchange=gallery;}
 }
-async function movePhoto(index,direction){
- const all=rows('wdGallery'),next=index+direction;
- if(next<0||next>=all.length)return;
+async function movePhoto(id,direction){
+ const all=galleryRows(),index=all.findIndex(item=>String(item.id)===String(id)),next=index+direction;
+ if(index<0||next<0||next>=all.length)return;
  [all[index],all[next]]=[all[next],all[index]];
+ all.forEach((item,i)=>item.position=i);
  cache.set('wdGallery',all);
- for(let i=0;i<all.length;i++)if(typeof all[i]!=='string'){all[i].position=i;await save('gallery',all[i])}
- gallery();toast('Gallery order updated.');
+ try{for(const item of all)await save('gallery',item);gallery();toast('Gallery order updated.');}
+ catch(error){console.error(error);toast('The gallery order could not be saved.');}
 }
 $('#addGallery').onclick=()=>{
- openDrawer('Add outreach photos','FEED THE STREET',`<div class="drawer-section">
+ let selectedFiles=[];
+ openDrawer('Add outreach photos','FEED THE STREET',`<div class="drawer-section gallery-bulk-panel">
   <div class="field"><label for="galleryOutreach">Which outreach are these photos from?</label><select id="galleryOutreach"><option value="may-2026">May 2026 · 100 children in Accra</option><option value="october-2026">October 2026 · 800+ children at a basic school</option><option value="december-2026">Boxing Day 2026 · Upcoming outreach</option></select></div>
-  ${uploadBox('galleryUpload')}
-  <p>Upload one photo at a time. You can add as many as you need to each outreach.</p>
- </div><div class="drawer-actions"><button class="primary" id="saveGalleryPhoto" disabled>Choose a photo first</button></div>`);
- const box=$('#galleryUpload');
- box.onclick=async()=>{
-  const upload=await chooseImage(box,'feed-gallery');
-  if(upload){$('#saveGalleryPhoto').disabled=false;$('#saveGalleryPhoto').textContent='Add this photo';$('#saveGalleryPhoto').dataset.url=upload.url;$('#saveGalleryPhoto').dataset.pid=upload.publicId}
+  <button type="button" class="gallery-upload-choice" id="chooseGalleryFiles"><span class="gallery-upload-icon"><i class="fa-solid fa-images"></i></span><span><b>Choose multiple photos</b><small>Select several images at once from your device</small></span><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+  <div class="gallery-upload-hint">JPG, PNG, WEBP, GIF or AVIF. Up to 8 MB per image and 20 images per batch.</div>
+  <div class="gallery-upload-status" id="galleryUploadStatus" aria-live="polite">No photos selected yet.</div>
+  <div class="gallery-upload-queue" id="galleryFileQueue"></div>
+ </div><div class="drawer-actions"><button class="primary" id="uploadGalleryFiles" disabled><i class="fa-solid fa-cloud-arrow-up"></i> Upload photos</button></div>`);
+ const input=$('#galleryMultiInput');
+ const choose=$('#chooseGalleryFiles');
+ const start=$('#uploadGalleryFiles');
+ const queue=$('#galleryFileQueue');
+ const status=$('#galleryUploadStatus');
+ if(!input||!choose||!start||!queue||!status){toast('The bulk photo uploader could not be opened. Refresh the page and try again.');return;}
+ const formatSize=size=>size<1024*1024?`${Math.max(1,Math.round(size/1024))} KB`:`${(size/1024/1024).toFixed(1)} MB`;
+ const renderQueue=()=>{
+  queue.innerHTML=selectedFiles.map(({file,error})=>`<div class="gallery-upload-file"><i class="fa-regular fa-image"></i><span><b>${esc(file.name)}</b><small>${formatSize(file.size)}${error?` · ${esc(error)}`:''}</small></span>${error?'<i class="fa-solid fa-circle-exclamation upload-error"></i>':'<i class="fa-solid fa-check upload-ready"></i>'}</div>`).join('');
+  status.textContent=selectedFiles.length?`${selectedFiles.length} photo${selectedFiles.length===1?'':'s'} ready to upload.`:'No photos selected yet.';
+  start.disabled=!selectedFiles.length||start.dataset.uploading==='true';
  };
- $('#saveGalleryPhoto').onclick=async event=>{
-  const button=event.currentTarget;
-  busy(button,true,'Adding');
+ choose.onclick=()=>{input.value='';input.click();};
+ input.onchange=()=>{
+  const picked=Array.from(input.files||[]);
+  if(picked.length>20)toast('You can upload up to 20 photos in one batch. The first 20 have been selected.');
+  selectedFiles=picked.slice(0,20).map(file=>({file,error:''}));
+  renderQueue();
+ };
+ start.onclick=async()=>{
+  if(!selectedFiles.length)return;
+  const files=[...selectedFiles],eventId=$('#galleryOutreach').value;
+  let next=0,completed=0,uploaded=0;
+  const failed=[];
+  start.dataset.uploading='true';start.disabled=true;choose.disabled=true;$('#galleryOutreach').disabled=true;
+  status.textContent=`Uploading 0 of ${files.length} photos…`;
+  const worker=async()=>{
+   while(true){
+    const index=next++;
+    if(index>=files.length)return;
+    const file=files[index].file;
+    try{
+     const up=await WD_CLOUDINARY.upload(file,'feed-gallery');
+     const position=Date.now()+index;
+     const item={id:uid('gallery'),url:up.url,cloudinaryPublicId:up.publicId,eventId,position,createdAt:new Date().toISOString(),filename:file.name,hidden:false};
+     await save('gallery',item);
+     uploaded++;
+    }catch(error){
+     console.error('Feed gallery upload failed:',file.name,error);
+     failed.push({file,error:error.message||'Upload failed'});
+    }finally{
+     completed++;
+     status.textContent=`Uploading ${completed} of ${files.length} photos · ${uploaded} saved${failed.length?` · ${failed.length} failed`:''}`;
+    }
+   }
+  };
   try{
-   const all=rows('wdGallery');
-   await save('gallery',{id:uid('gallery'),url:button.dataset.url,cloudinaryPublicId:button.dataset.pid,eventId:$('#galleryOutreach').value,position:all.length,createdAt:new Date().toISOString()});
-   renderAll();closeDrawer();toast('Outreach photo added.');
-  }catch(error){console.error(error);toast('The photo could not be saved. Please try again.')}
-  finally{busy(button,false)}
+   await Promise.all(Array.from({length:Math.min(3,files.length)},()=>worker()));
+   renderAll();
+   if(failed.length){
+    selectedFiles=failed;start.dataset.uploading='false';choose.disabled=false;$('#galleryOutreach').disabled=false;renderQueue();
+    status.textContent=`${uploaded} uploaded successfully. ${failed.length} failed. You can retry the remaining photos.`;
+    toast(`${uploaded} photos uploaded. ${failed.length} need another try.`);
+   }else{
+    closeDrawer();toast(`${uploaded} outreach photo${uploaded===1?'':'s'} uploaded successfully.`);
+   }
+  }catch(error){
+   console.error(error);start.dataset.uploading='false';choose.disabled=false;$('#galleryOutreach').disabled=false;renderQueue();toast('The upload could not be completed. Please try again.');
+  }
  };
+ renderQueue();
 };
 function donations(){const a=rows('wdDonations');const total=a.reduce((s,x)=>s+Number(x.amount||0),0);$('#donationTotal').textContent=money(total);$('#donationList').innerHTML=a.length?a.map(d=>`<div class="list-row" data-donation="${d.id}"><div><h4>${esc(d.name||'Anonymous supporter')}</h4><small>${esc(d.email||'No email')}</small></div><div><span class="badge on">${esc(d.status||'PAID')}</span></div><div><b>${money(d.amount)}</b><small>${new Date(d.date||Date.now()).toLocaleString()}</small></div><i class="fa-solid fa-chevron-right"></i></div>`).join(''):'<p class="empty-admin">No donations yet.</p>';$$('[data-donation]').forEach(b=>b.onclick=()=>{const d=a.find(x=>x.id===b.dataset.donation);openDrawer(`${d.name||'Donation'}`,'DONATION',`<div class="drawer-section"><h3>${money(d.amount)}</h3><p>${esc(d.email||'No email')}</p><p>Payment reference: <b>${esc(d.reference||'Not saved')}</b></p><p>${new Date(d.date||Date.now()).toLocaleString()}</p></div>`)})}
 function team(){const a=[...rows('wdTeam',WD_DEFAULT_TEAM)].sort((x,y)=>(x.lockedFounder?-1:0)-(y.lockedFounder?-1:0)||Number(x.position||999)-Number(y.position||999));$('#teamList').innerHTML=a.map((p,i)=>`<article class="admin-card team-admin-card" data-team="${esc(p.id)}"><div class="admin-card-media"><img src="${esc(p.image||'images/placeholder-food.svg')}" alt="${esc(p.name)}"><span class="team-position-badge">#${p.lockedFounder?1:(Number(p.position)||i+1)}</span></div><div class="admin-card-copy"><small>${p.lockedFounder?'FOUNDER · FIXED':'TEAM PROFILE'}</small><h3>${esc(p.name)}</h3><p>${esc(p.bio||'')}</p><div class="admin-card-foot"><span>${esc(p.role||'Team')}</span><span class="small-btn">Edit profile</span></div></div></article>`).join('');$$('[data-team]').forEach(b=>b.onclick=()=>teamDrawer(b.dataset.team));}
