@@ -507,3 +507,7 @@
 .photo-tools .photo-visibility-btn{width:auto;min-width:78px;padding:0 11px;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#4c423a;font-size:11px;font-weight:800}
 .photo-tools .photo-visibility-btn.restore{background:#e1f1e5;color:#1d6a43}
 @media(max-width:780px){.gallery-upload-choice{padding:13px}.gallery-upload-status{font-size:11px}}
+
+/* Feed the Street gallery bulk actions */
+.gallery-admin-buttons{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+@media(max-width:640px){.gallery-admin-buttons{width:100%}.gallery-admin-buttons button{flex:1 1 100%}}

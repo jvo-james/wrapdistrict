@@ -1251,6 +1251,30 @@ function gallery(){
   try{await save('gallery',item);gallery();toast('Photo moved to the selected outreach.');}
   catch(error){console.error(error);toast('The photo could not be updated.');}
  });
+ const restoreMayButton=$('#restoreMayRepository');
+ if(restoreMayButton&&!restoreMayButton.dataset.bound){
+  restoreMayButton.dataset.bound='1';
+  restoreMayButton.onclick=async()=>{
+   const button=restoreMayButton;
+   if(!confirm('Restore all 12 original May outreach photos (p1.jpeg to p12.jpeg) and make them visible on the website?'))return;
+   busy(button,true,'Restoring photos');
+   const current=galleryRows();
+   let restored=0,failed=0;
+   for(let index=1;index<=12;index++){
+    const id=`repo-may-${String(index).padStart(2,'0')}`;
+    const url=`images/p${index}.jpeg`;
+    const existing=current.find(photo=>String(photo.id)===id)||{};
+    const item={...existing,id,url,eventId:'may-2026',position:index-1,isRepositoryImage:true,filename:`p${index}.jpeg`,hidden:false,hiddenAt:null};
+    try{await save('gallery',item);restored++;}
+    catch(error){failed++;console.error(`Could not restore ${url}:`,error);}
+   }
+   if(filter)filter.value='may-2026';
+   gallery();
+   busy(button,false);
+   if(failed){toast(`${restored} May photos restored. ${failed} could not sync. Please try again.`);}
+   else{toast('All 12 May repository photos restored and visible on the website.');}
+  };
+ }
  if(filter&&!filter.dataset.bound){filter.dataset.bound='1';filter.onchange=gallery;}
 }
 async function movePhoto(id,direction){
