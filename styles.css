@@ -1082,3 +1082,48 @@ button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
   .team-founder-image-v5{height:235px}
   .team-profile-photo-v5{height:36svh;min-height:230px}
 }
+
+/* Team image fit: cards fill their frames, while the profile drawer keeps the full portrait visible. */
+.team-founder-image-v5{
+  display:block;
+  padding:0;
+  overflow:hidden;
+  background:#e8dfd4;
+}
+.team-founder-image-v5 img{
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:292px;
+  object-fit:cover;
+  object-position:center 38%;
+}
+.team-card-v4-image{
+  display:block;
+  aspect-ratio:9 / 11;
+  padding:0;
+  overflow:hidden;
+  background:#e8dfd4;
+}
+.team-card-v4-image img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 38%;
+  transition:transform .35s ease;
+}
+.team-card-v4:hover .team-card-v4-image img{transform:scale(1.025)}
+.team-profile-photo-v5 img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+}
+@media(max-width:760px){
+  .team-founder-image-v5{padding:0}
+  .team-founder-image-v5 img{min-height:0;object-fit:cover;object-position:center 38%}
+  .team-card-v4-image{aspect-ratio:9 / 11;padding:0}
+  .team-card-v4-image img{object-fit:cover;object-position:center 38%}
+  .team-profile-photo-v5 img{max-height:100%;max-width:100%;object-fit:contain}
+}
