@@ -1,15 +1,95 @@
-(() => {
-  const root=document.querySelector('#teamRoot');if(!root)return;
+(()=>{
+  const root=document.querySelector('#teamRoot');
+  if(!root)return;
   const socialData=[['instagram','instagram','Instagram'],['tiktok','tiktok','TikTok'],['snapchat','snapchat','Snapchat'],['x','x-twitter','X'],['facebook','facebook-f','Facebook']];
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  function allowedImage(value,fallback){const image=String(value||'').trim();if(!image)return fallback;const lower=image.toLowerCase();if(lower.includes('unsplash.com')||lower.includes('images.unsplash.com'))return fallback;return image}
-  function people(){const defaults=Array.isArray(window.WD_DEFAULT_TEAM)?window.WD_DEFAULT_TEAM:[],saved=window.WD?.team?WD.team():[];const by=new Map(saved.map(x=>[String(x.id),x]));const merged=defaults.filter(d=>d.lockedFounder||!by.get(String(d.id))?.deleted).map(d=>({...d,...(by.get(String(d.id))||{}),deleted:false}));saved.forEach(x=>{if(!defaults.some(d=>String(d.id)===String(x.id))&&!x.deleted)merged.push(x)});return merged.map((x,i)=>({...x,image:allowedImage(x.image,defaults.find(d=>String(d.id)===String(x.id))?.image||'images/placeholder-food.svg'),position:Number(x.position)||i+1})).filter(x=>x.name).sort((a,b)=>{const af=a.lockedFounder||String(a.id)==='t1'?0:1,bf=b.lockedFounder||String(b.id)==='t1'?0:1;return af-bf||Number(a.position)-Number(b.position)||String(a.name).localeCompare(String(b.name))})}
-  function socials(p){const links=socialData.filter(([k])=>p[k]&&p[k]!=='#');return links.length?`<div class="team-drawer-socials">${links.map(([k,icon,label])=>`<a href="${esc(p[k])}" target="_blank" rel="noopener noreferrer"><span><i class="fa-brands fa-${icon}"></i>${label}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>`).join('')}</div>`:`<div class="team-social-empty"><i class="fa-regular fa-circle-user"></i><span>Public social links will appear here when they are added.</span></div>`}
-  function founderCard(p){return `<section class="team-founder-v3" aria-labelledby="founderName"><div class="team-founder-copy-v3"><div class="team-founder-number">Founder</div><span class="eyebrow">Founder spotlight</span><h2 id="founderName">${esc(p.name).replace(/\s+/,'<br>')}</h2><p>${esc(p.bio||'Founder of Wrap District.')}</p><button class="team-profile-link-v3" type="button" data-person-id="${esc(p.id)}">Open ${esc(p.name)}'s profile <span><i class="fa-solid fa-arrow-right"></i></span></button></div><button class="team-founder-portrait-v3" type="button" data-person-id="${esc(p.id)}" aria-label="Open ${esc(p.name)}'s profile"><img src="${esc(p.image)}" alt="${esc(p.name)}"><span class="team-founder-corner">Founder</span><span class="team-portrait-open"><i class="fa-solid fa-expand"></i> View profile</span></button></section>`}
-  function memberCard(p,i){return `<button class="team-person-v3 team-person-v3-${(i%7)+1}" type="button" data-person-id="${esc(p.id)}" aria-label="Open ${esc(p.name)}'s profile"><span class="team-person-image-v3"><img src="${esc(p.image)}" alt="${esc(p.name)}"></span><span class="team-person-shade-v3"></span><span class="team-person-name-v3">${esc(p.name)}</span><span class="team-person-role-v3">${esc(p.role||'Team')}</span></button>`}
-  const drawer=()=>`<div class="team-drawer-backdrop-v3" id="teamBackdrop" aria-hidden="true"></div><aside class="team-profile-drawer-v3" id="teamDrawer" aria-hidden="true" aria-label="Team member profile"><button class="team-drawer-close-v3" type="button" data-team-close aria-label="Close profile"><i class="fa-solid fa-xmark"></i></button><div id="teamDrawerContent"></div></aside>`;
-  function render(){const list=people();if(!list.length){root.innerHTML='<p class="lede">Team profiles are being prepared. Please check back soon.</p>';return}const founder=list.find(x=>x.lockedFounder||String(x.id)==='t1')||list[0],others=list.filter(x=>String(x.id)!==String(founder.id));root.innerHTML=`${founderCard(founder)}<section class="team-rest-v3" aria-labelledby="teamPeopleTitle"><div class="team-rest-head-v3"><div><span class="eyebrow">The people around the District</span><h2 id="teamPeopleTitle">Meet the rest<br>of the team.</h2></div><p>A focused team bringing food, service, ideas and digital craft together. Open any profile to meet the people helping build the District.</p></div><div class="team-grid-v3">${others.map(memberCard).join('')}</div></section>${drawer()}`;root.querySelectorAll('[data-person-id]').forEach(btn=>btn.addEventListener('click',()=>{const p=list.find(x=>String(x.id)===String(btn.dataset.personId));if(p)open(p,p===founder)}));root.querySelector('[data-team-close]')?.addEventListener('click',close);root.querySelector('#teamBackdrop')?.addEventListener('click',close)}
-  function open(p,isFounder){const d=document.querySelector('#teamDrawer'),b=document.querySelector('#teamBackdrop'),c=document.querySelector('#teamDrawerContent');if(!d||!b||!c)return;c.innerHTML=`<div class="team-drawer-portrait-v3"><img src="${esc(p.image)}" alt="${esc(p.name)}"><span class="team-drawer-word-v3">DISTRICT</span></div><div class="team-drawer-body-v3"><div class="team-drawer-heading-v3"><span class="eyebrow">${isFounder?'Founder of Wrap District':'Meet the team'}</span><h2>${esc(p.name)}</h2></div><div class="team-drawer-about-v3"><span>About</span><p>${esc(p.bio||'A short introduction will be added soon.')}</p></div><div class="team-drawer-connect-v3"><span>Find them online</span>${socials(p)}</div></div>`;d.classList.add('open');b.classList.add('open');d.setAttribute('aria-hidden','false');b.setAttribute('aria-hidden','false');document.body.classList.add('no-scroll')}
-  function close(){document.querySelector('#teamDrawer')?.classList.remove('open');document.querySelector('#teamBackdrop')?.classList.remove('open');document.body.classList.remove('no-scroll')}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});render();document.addEventListener('wd:data-ready',render);
+  function allowedImage(value,fallback){
+    const image=String(value||'').trim();
+    if(!image)return fallback;
+    const lower=image.toLowerCase();
+    if(lower.includes('unsplash.com')||lower.includes('images.unsplash.com'))return fallback;
+    return image;
+  }
+  function people(){
+    const defaults=Array.isArray(window.WD_DEFAULT_TEAM)?window.WD_DEFAULT_TEAM:[];
+    const saved=window.WD?.team?WD.team():[];
+    const by=new Map(saved.map(person=>[String(person.id),person]));
+    const merged=defaults
+      .filter(person=>person.lockedFounder||!by.get(String(person.id))?.deleted)
+      .map(person=>({...person,...(by.get(String(person.id))||{}),deleted:false}));
+    saved.forEach(person=>{
+      if(!defaults.some(item=>String(item.id)===String(person.id))&&!person.deleted)merged.push(person);
+    });
+    return merged.map((person,index)=>{
+      const base=defaults.find(item=>String(item.id)===String(person.id));
+      const james=String(person.id)==='t4';
+      return {
+        ...person,
+        role:james?'Web Designer · Professional Golfer':person.role,
+        bio:james?base.bio:person.bio,
+        image:allowedImage(person.image,base?.image||'images/placeholder-food.svg'),
+        position:Number(person.position)||index+1
+      };
+    }).filter(person=>person.name)
+      .sort((a,b)=>(a.lockedFounder||String(a.id)==='t1'?0:1)-(b.lockedFounder||String(b.id)==='t1'?0:1)||a.position-b.position||String(a.name).localeCompare(String(b.name)));
+  }
+  function socialLinks(person){
+    const links=socialData.filter(([key])=>person[key]&&person[key]!=='#');
+    if(!links.length)return'<p class="team-profile-empty">Social links will appear here when they are added.</p>';
+    return`<div class="team-profile-socials">${links.map(([key,icon,label])=>`<a href="${esc(person[key])}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-${icon}"></i><span>${label}</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>`).join('')}</div>`;
+  }
+  function profileModal(){
+    return`<div class="team-profile-backdrop" id="teamBackdrop" aria-hidden="true"></div>
+      <section class="team-profile-modal" id="teamModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="teamModalName">
+        <button class="team-profile-close" type="button" data-team-close aria-label="Close profile"><i class="fa-solid fa-xmark"></i></button>
+        <div id="teamModalContent"></div>
+      </section>`;
+  }
+  function card(person,index){
+    return`<button class="team-card-v4 team-card-tone-${(index%4)+1}" type="button" data-person-id="${esc(person.id)}" aria-label="View ${esc(person.name)}'s profile">
+      <span class="team-card-v4-image"><img src="${esc(person.image)}" alt="${esc(person.name)}" loading="lazy" decoding="async" onerror="this.src='images/placeholder-food.svg'"></span>
+      <span class="team-card-v4-copy"><span class="team-card-v4-role">${esc(person.role||'Team')}</span><strong>${esc(person.name)}</strong><span class="team-card-v4-open">Meet ${esc(person.name.split(' ')[0])} <i class="fa-solid fa-arrow-up-right-from-square"></i></span></span>
+    </button>`;
+  }
+  function render(){
+    const list=people();
+    if(!list.length){
+      root.innerHTML='<p class="lede">Team profiles are being prepared. Please check back soon.</p>';
+      return;
+    }
+    root.innerHTML=`${list.map(card).join('')}${profileModal()}`;
+    root.querySelectorAll('[data-person-id]').forEach(button=>{
+      button.addEventListener('click',()=>{
+        const person=list.find(item=>String(item.id)===String(button.dataset.personId));
+        if(person)openProfile(person);
+      });
+    });
+    root.querySelector('[data-team-close]')?.addEventListener('click',closeProfile);
+    root.querySelector('#teamBackdrop')?.addEventListener('click',closeProfile);
+  }
+  function openProfile(person){
+    const modal=document.querySelector('#teamModal');
+    const backdrop=document.querySelector('#teamBackdrop');
+    const content=document.querySelector('#teamModalContent');
+    if(!modal||!backdrop||!content)return;
+    content.innerHTML=`<div class="team-profile-layout">
+      <div class="team-profile-photo"><img src="${esc(person.image)}" alt="${esc(person.name)}"></div>
+      <div class="team-profile-copy"><span class="eyebrow">${esc(person.role||'Wrap District team')}</span><h2 id="teamModalName">${esc(person.name)}</h2><div class="team-profile-about"><span>About</span><p>${esc(person.bio||'A little more about this team member will be added soon.')}</p></div><div class="team-profile-connect"><span>Find them online</span>${socialLinks(person)}</div>${String(person.id)==='t4'?'<a class="team-james-cta" href="#jvo-contact" data-open-jvo-modal>Talk to James about a website <i class="fa-solid fa-arrow-up-right-from-square"></i></a>':''}</div>
+    </div>`;
+    modal.classList.add('open');
+    backdrop.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    backdrop.setAttribute('aria-hidden','false');
+    document.body.classList.add('no-scroll');
+  }
+  function closeProfile(){
+    document.querySelector('#teamModal')?.classList.remove('open');
+    document.querySelector('#teamBackdrop')?.classList.remove('open');
+    document.querySelector('#teamModal')?.setAttribute('aria-hidden','true');
+    document.querySelector('#teamBackdrop')?.setAttribute('aria-hidden','true');
+    document.body.classList.remove('no-scroll');
+  }
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeProfile()});
+  render();
+  document.addEventListener('wd:data-ready',render);
 })();

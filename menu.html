@@ -2,4 +2,21 @@
   <link rel="icon" type="image/jpeg" href="logo.jpeg">
   
   
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"><link rel="stylesheet" href="styles.css"><link rel="manifest" href="site.webmanifest"></head><body data-page="menu"><div data-site-header></div><main><section class="page-hero menu-hero" data-image-bg="menuHero"><div><span class="eyebrow">Choose your move</span><h1>Menu.</h1><p class="lede">From a quick wrap to a loaded plate, find your favourite and build it your way.</p></div></section><section class="section menu-section"><div class="wrap"><div class="menu-intro"><div><span class="eyebrow">Made to order</span><h2>Pick it. Build it. Enjoy it.</h2></div><p>Every card opens the full builder so you can choose your size, protein, sauces and extras where available.</p></div><div class="menu-grid" id="menuGrid"></div></div></section></main><div data-site-footer></div><script src="images.js"></script><script src="config.js"></script><script src="firebase.js"></script><script src="site-images.js"></script><script src="data.js"></script><script src="app.js"></script><script src="menu-page.js"></script></body></html>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"></noscript><link rel="stylesheet" href="styles.css"><link rel="manifest" href="site.webmanifest"></head><body data-page="menu"><div data-site-header></div><main class="menu-page-v4">
+  <section class="menu-list-v4 menu-list-v4-top" id="district-menu">
+    <div class="wrap">
+      <div class="menu-list-v4-heading">
+        <div><span class="eyebrow">Fresh from the District kitchen</span><h1>What sounds good?</h1></div>
+        <p>Wraps, loaded boxes and proper plates made fresh in Tema. Pick a favourite and make the details yours.</p>
+      </div>
+      <div class="menu-filter-row" id="menuFilters" aria-label="Filter menu">
+        <button type="button" class="active" data-menu-filter="all" aria-pressed="true">Everything</button>
+        <button type="button" data-menu-filter="wraps" aria-pressed="false">Wraps &amp; burgers</button>
+        <button type="button" data-menu-filter="loaded" aria-pressed="false">Loaded favourites</button>
+        <button type="button" data-menu-filter="plates" aria-pressed="false">Rice &amp; noodles</button>
+        <button type="button" data-menu-filter="fresh" aria-pressed="false">Fresh sides</button>
+      </div>
+      <div class="menu-grid-v4" id="menuGrid"></div>
+    </div>
+  </section>
+</main><div data-site-footer></div><script src="images.js"></script><script src="config.js"></script><script src="firebase.js"></script><script src="site-images.js"></script><script src="data.js"></script><script src="app.js"></script><script src="menu-page.js"></script></body></html>

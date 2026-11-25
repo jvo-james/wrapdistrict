@@ -18,7 +18,6 @@ window.WD_IMAGES = {
   contactPhoto: 'images/contact.jpg', // Contact page food photo
   menuHero: 'images/menuhero.jpg', // Menu page hero
   teamHero: 'images/teamhero.jpg', // Team page hero
-  homeBuildSection: 'images/build.webp', // Home “Make it dangerous” image
   homeFeedStreet: 'images/feed.jpeg', // Home Feed the Street photo
   promoFallback: 'images/promo.jpg', // Promo page fallback image
   feedHero: 'images/hero4.jpg',               // Feed the Street hero background
@@ -84,6 +83,5 @@ window.WD_IMAGE_LIST = [
   WD_IMAGES.feedGallery01, WD_IMAGES.feedGallery02, WD_IMAGES.feedGallery03,
   WD_IMAGES.feedGallery04, WD_IMAGES.feedGallery05, WD_IMAGES.feedGallery06,
   WD_IMAGES.feedGallery07, WD_IMAGES.feedGallery08, WD_IMAGES.feedGallery09,
-  WD_IMAGES.feedGallery10, WD_IMAGES.feedGallery11, WD_IMAGES.feedGallery12,
-  WD_IMAGES.feedGallery13, WD_IMAGES.feedGallery14, WD_IMAGES.feedGallery15, WD_IMAGES.feedGallery16, WD_IMAGES.feedGallery17
+  WD_IMAGES.feedGallery10, WD_IMAGES.feedGallery11, WD_IMAGES.feedGallery12
 ];

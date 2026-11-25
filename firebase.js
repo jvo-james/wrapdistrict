@@ -3,10 +3,32 @@
   let app, db, auth;
   let initPromise;
 
-  const load = src => new Promise((resolve, reject) => {
-    if ([...document.scripts].some(s => s.src === src)) return resolve();
-    const s = document.createElement('script'); s.src = src; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
-  });
+  const scriptLoads = new Map();
+  const load = src => {
+    if (scriptLoads.has(src)) return scriptLoads.get(src);
+    const promise = new Promise((resolve, reject) => {
+      const existing = [...document.scripts].find(script => script.src === src);
+      const script = existing || document.createElement('script');
+      let settled = false;
+      const finish = (error) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (error) reject(error);
+        else resolve();
+      };
+      const timer = setTimeout(() => finish(new Error('A service script took too long to load.')), 6500);
+      script.addEventListener('load', () => finish(), { once: true });
+      script.addEventListener('error', () => finish(new Error('A service script could not be loaded.')), { once: true });
+      if (!existing) {
+        script.async = true;
+        script.src = src;
+        document.head.appendChild(script);
+      }
+    });
+    scriptLoads.set(src, promise);
+    return promise;
+  };
 
   async function init() {
     if (initPromise) return initPromise;
@@ -14,8 +36,10 @@
       const cfg = window.WD_CONFIG?.firebase;
       if (!cfg?.apiKey) return false;
       await load(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-app-compat.js`);
-      await load(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth-compat.js`);
-      await load(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore-compat.js`);
+      await Promise.all([
+        load(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-auth-compat.js`),
+        load(`https://www.gstatic.com/firebasejs/${SDK_VERSION}/firebase-firestore-compat.js`)
+      ]);
       app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg);
       auth = firebase.auth();
       db = firebase.firestore();
@@ -27,7 +51,7 @@
 
   const cache = {
     get(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
-    set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (error) { console.warn('Local cache is unavailable on this device.', error); } return value; }
   };
 
   const mapDoc = d => ({ id: d.id, ...d.data() });
@@ -43,7 +67,10 @@
       if (collectionName === 'reviews' && !(auth?.currentUser && await isAdmin(auth.currentUser))) {
         ref = ref.where('approved', '==', true);
       }
-      const snap = await ref.get();
+      const snap = await Promise.race([
+        ref.get(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Data request timed out.')), 7500))
+      ]);
       if (snap.empty) return local;
       const values = snap.docs.map(mapDoc);
       cache.set(localKey, values);

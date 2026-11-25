@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>District Control | Wrap District</title>
   <link rel="icon" type="image/jpeg" href="logo.jpeg">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"></noscript>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body class="admin-body">
@@ -114,7 +114,7 @@
         <div class="page-intro"><div><span>Website content</span><h2>Homepage, gallery & team.</h2><p>Manage the visual parts of the site without touching code.</p></div></div>
         <div class="admin-tabs"><button class="active" data-subtab="slidesPane">Homepage slides</button><button data-subtab="galleryPane">Feed gallery</button><button data-subtab="teamPane">Team</button></div>
         <section class="admin-subview active" id="slidesPane"><div class="section-actions"><button class="primary" id="addSlide"><i class="fa-solid fa-plus"></i> Add slide</button></div><div class="slide-admin-grid" id="slideList"></div></section>
-        <section class="admin-subview" id="galleryPane"><div class="section-actions"><button class="primary" id="addGallery"><i class="fa-solid fa-cloud-arrow-up"></i> Add photos</button></div><div class="gallery-note"><i class="fa-solid fa-grip"></i><span>Move photos earlier or later. The same order appears on the public Feed the Street gallery.</span></div><div class="admin-gallery" id="adminGallery"></div></section>
+        <section class="admin-subview" id="galleryPane"><div class="section-actions gallery-admin-actions"><label class="gallery-event-filter">Show photos for<select id="galleryEventFilter"><option value="all">All outreach</option><option value="may-2026">May 2026 · 100 children</option><option value="october-2026">October 2026 · 800+ children</option><option value="december-2026">Boxing Day 2026</option></select></label><button class="primary" id="addGallery"><i class="fa-solid fa-cloud-arrow-up"></i> Add photos</button></div><div class="gallery-note"><i class="fa-solid fa-images"></i><span>Choose the outreach when you upload. Photos appear in that story on the public page and in the full gallery.</span></div><div class="admin-gallery" id="adminGallery"></div></section>
         <section class="admin-subview" id="teamPane"><div class="section-actions"><button class="primary" id="addTeamMember"><i class="fa-solid fa-user-plus"></i> Add team member</button></div><div class="team-sync-note"><i class="fa-solid fa-users"></i><div><strong>The founder stays permanently at position 1.</strong><span>Add or remove other members and choose the order in which they appear on the public Team page.</span></div></div><div class="team-admin-grid" id="teamList"></div></section>
       </div>
 
